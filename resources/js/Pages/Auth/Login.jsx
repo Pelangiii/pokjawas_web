@@ -1,100 +1,105 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+// import Checkbox from '@/Components/Checkbox';
+// import InputError from '@/Components/InputError';
+// import InputLabel from '@/Components/InputLabel';
+// import PrimaryButton from '@/Components/PrimaryButton';
+// import TextInput from '@/Components/TextInput';
+// import GuestLayout from '@/Layouts/GuestLayout';
+import { Head, useForm } from '@inertiajs/react';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
+        email: '', // Gunakan email sesuai logic backend Anda
         password: '',
-        remember: false,
+
     });
+
+    
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('login'), {
             onFinish: () => reset('password'),
         });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div 
+        >
+            <Head title="Login" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {/* Container Putih Utama */}
+            <div className="relative w-full  bg-white rounded-xl flex flex-col items-center md:px-20 min-h-[800px]">
+                
+                {/* Tombol Kembali Halaman (Pojok Kiri Atas di dalam box) */}
+                <button className="absolute top-8 left-8 flex items-center gap-3 border border-slate-700 text-slate-700 px-6 py-3 rounded-full hover:bg-slate-100 transition text-sm font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Kembali Halaman
+                </button>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
+                {/* Logo Kemenag */}
+                <div className="mt-10 mb-6">
+                    <img 
+                        src="/images/pokjawas.png"
+                        alt="Logo Kemenag"
+                        className="w-28 h-auto"
                     />
-
-                    <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
+                {/* Judul Teks */}
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">Pokjawas Kemenag</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">Kabupaten Tangerang</h2>
                 </div>
 
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
+                {/* Background Gedung Abu-abu Tipis (Sesuai Gambar) */}
+               <div 
+    className="absolute bottom-1 left-0 h w-full h-2/3 bg-contain"
+    style={{ backgroundImage: "url('/images/gedung.png')" }}
+></div>
+
+                {/* Form Login */}
+                <form onSubmit={submit} className="w-full max-w-md space-y-4 relative z-10">
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="Username"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-gray-700 placeholder-gray-400 transition"
                         />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                        {errors.email && <p className="text-red-500 text-xs mt-1 ml-2">{errors.email}</p>}
+                    </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-gray-700 placeholder-gray-400 transition"
+                        />
+                        {errors.password && <p className="text-red-500 text-xs mt-1 ml-2">{errors.password}</p>}
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[#2D5A47] text-white px-10 py-2.5 rounded-xl hover:bg-[#234738] shadow-lg transition-all font-semibold"
                         >
-                            Forgot your password?
-                        </Link>
-                    )}
+                            Login
+                        </button>
+                    </div>
+                </form>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+                {status && (
+                    <div className="mt-4 text-green-600 text-sm font-medium">
+                        {status}
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
