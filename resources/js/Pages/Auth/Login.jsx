@@ -4,41 +4,47 @@
 // import PrimaryButton from '@/Components/PrimaryButton';
 // import TextInput from '@/Components/TextInput';
 // import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '', // Gunakan email sesuai logic backend Anda
+        email: '',
         password: '',
-
     });
-
-    
 
     const submit = (e) => {
         e.preventDefault();
+        
         post(route('login'), {
-            onFinish: () => reset('password'),
+            onSuccess: () => {
+                // Reset form setelah sukses
+                reset('password');
+                // Redirect akan ditangani oleh controller
+            },
+            onError: (errors) => {
+                console.log('Login gagal:', errors);
+            }
         });
     };
 
     return (
-        <div 
-        >
+        <div>
             <Head title="Login" />
 
-            {/* Container Putih Utama */}
-            <div className="relative w-full  bg-white rounded-xl flex flex-col items-center md:px-20 min-h-[800px]">
+            <div className="relative w-full bg-white rounded-xl flex flex-col items-center md:px-20 min-h-[800px]">
                 
-                {/* Tombol Kembali Halaman (Pojok Kiri Atas di dalam box) */}
-                <button className="absolute top-8 left-8 flex items-center gap-3 border border-slate-700 text-slate-700 px-6 py-3 rounded-full hover:bg-slate-100 transition text-sm font-medium">
+                {/* Tombol Kembali ke Home */}
+                <button 
+                    onClick={() => window.location.href = '/'}
+                    className="absolute top-8 left-8 flex items-center gap-3 border border-slate-700 text-slate-700 px-6 py-3 rounded-full hover:bg-slate-100 transition text-sm font-medium"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Kembali Halaman
                 </button>
 
-                {/* Logo Kemenag */}
+                {/* Logo dan Judul tetap sama */}
                 <div className="mt-10 mb-6">
                     <img 
                         src="/images/pokjawas.png"
@@ -47,24 +53,22 @@ export default function Login({ status }) {
                     />
                 </div>
 
-                {/* Judul Teks */}
                 <div className="text-center mb-10">
                     <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">Pokjawas Kemenag</h2>
                     <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">Kabupaten Tangerang</h2>
                 </div>
 
-                {/* Background Gedung Abu-abu Tipis (Sesuai Gambar) */}
-               <div 
-    className="absolute bottom-1 left-0 h w-full h-2/3 bg-contain"
-    style={{ backgroundImage: "url('/images/gedung.png')" }}
-></div>
+                <div 
+                    className="absolute bottom-1 left-0 w-full h-2/3 bg-contain"
+                    style={{ backgroundImage: "url('/images/gedung.png')" }}
+                ></div>
 
                 {/* Form Login */}
                 <form onSubmit={submit} className="w-full max-w-md space-y-4 relative z-10">
                     <div>
                         <input
                             type="email"
-                            placeholder="Username"
+                            placeholder="Email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-gray-700 placeholder-gray-400 transition"
@@ -89,7 +93,7 @@ export default function Login({ status }) {
                             disabled={processing}
                             className="bg-[#2D5A47] text-white px-10 py-2.5 rounded-xl hover:bg-[#234738] shadow-lg transition-all font-semibold"
                         >
-                            Login
+                            {processing ? 'Loading...' : 'Login'}
                         </button>
                     </div>
                 </form>
