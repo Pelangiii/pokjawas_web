@@ -4,6 +4,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use Inertia\Inertia;
 
 
@@ -80,6 +81,7 @@ Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berit
 //     ->middleware(['auth']);
 
 // Route::post('/berita', [BeritaController::class, 'store']);
+Route::resource('/users', UserController::class);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -103,4 +105,5 @@ Route::get('/user/dashboard', function () {
     return Inertia::render('UserDashboard');
 });
 
+require __DIR__.'/auth.php';
 require __DIR__.'/auth.php';
