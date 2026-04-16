@@ -23,14 +23,34 @@ Route::get('/dashboard', function () {
 
 // UPDATE ROUTE MANAJEMEN - tambah name dan middleware
 Route::get('/manajemen', function () {
-    return Inertia::render('manajemen');
-})->middleware(['auth'])->name('manajemen');
+    return Inertia::render('Manajemen');
+})->middleware(['auth'])->name('Manajemen');
 
-Route::get('/berita/create', function () {
-    return Inertia::render('Berita/Create');
-});
+// Route::get('/berita/create', function () {
+//     return Inertia::render('Berita/Create');
+// });
 
+Route::get('/berita', [BeritaController::class, 'index']);
 
+Route::post('/berita', [BeritaController::class, 'store'])
+    ->middleware(['auth']);
+
+Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
+
+// Proses Simpan Data
+Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+
+// Halaman utama manajemen
+Route::get('/manajemen', [BeritaController::class, 'index'])->name('manajemen.index');
+
+// Halaman buat input berita (Ini yang tadi error karena fungsinya ga ada)
+Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
+
+// Proses nyimpen datanya
+Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+
+// Proses hapus
+Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 // / ============ ROUTE BERITA ============.                                                  Z  
 // // Halaman manajemen berita (pake controller)
 // Route::get('/manajemen', [BeritaController::class, 'index'])
@@ -78,7 +98,6 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.users');
 
 });
-
 
 Route::get('/user/dashboard', function () {
     return Inertia::render('UserDashboard');

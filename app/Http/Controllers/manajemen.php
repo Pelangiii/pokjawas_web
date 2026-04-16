@@ -9,6 +9,6 @@ class ManajemenController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('manajemen');
+        return Inertia::render('Manajemen');
     }
 }
