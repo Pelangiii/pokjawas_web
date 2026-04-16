@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\LaporanController;
 use Inertia\Inertia;
 
 
@@ -52,8 +53,19 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/user/dashboard', function () {
-    return Inertia::render('UserDashboard');
+Route::middleware(['auth'])->prefix('user')->group(function () {
+
+    Route::get('/dashboard', function () {
+        return Inertia::render('User/Dashboard'); // 🔥 sesuai folder baru
+    });
+
+    // LAPORAN
+    Route::get('/laporan', [LaporanController::class, 'index']);
+    Route::get('/laporan/create', [LaporanController::class, 'create']);
+    Route::post('/laporan', [LaporanController::class, 'store']);
+    Route::get('/laporan/{id}/edit', [LaporanController::class, 'edit']);
+    Route::put('/laporan/{id}', [LaporanController::class, 'update']);
+
 });
 
 require __DIR__.'/auth.php';
