@@ -1,14 +1,10 @@
 import React from "react";
 import { router } from "@inertiajs/react";
+import UserLayout from "@/Layouts/UserLayout";
 
 export default function Index({ laporans }) {
   return (
-    <div className="p-8 bg-[#F5F7FB] min-h-screen">
-
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Laporan
-      </h1>
+    <UserLayout title="Laporan">
 
       {/* SEARCH + ACTION */}
       <div className="flex justify-between items-center mb-6">
@@ -53,14 +49,12 @@ export default function Index({ laporans }) {
             {/* LEFT */}
             <div className="flex items-center gap-4">
 
-              {/* IMAGE */}
               <img
                 src="https://via.placeholder.com/60"
                 alt=""
                 className="w-14 h-14 rounded-xl object-cover"
               />
 
-              {/* TITLE */}
               <p className="font-semibold text-gray-800 text-lg">
                 {item.title}
               </p>
@@ -70,30 +64,27 @@ export default function Index({ laporans }) {
             {/* RIGHT */}
             <div className="flex items-center gap-5 text-xl">
 
-              {/* VIEW */}
               <span
                 onClick={() => router.get(`/user/laporan/${item.id}`)}
-                className="cursor-pointer text-blue-500 hover:scale-110 transition"
+                className="cursor-pointer text-blue-500 hover:scale-110"
               >
                 👁️
               </span>
 
-              {/* EDIT */}
               <span
                 onClick={() => router.get(`/user/laporan/${item.id}/edit`)}
-                className="cursor-pointer text-yellow-500 hover:scale-110 transition"
+                className="cursor-pointer text-yellow-500 hover:scale-110"
               >
                 ✏️
               </span>
 
-              {/* DELETE */}
               <span
                 onClick={() => {
                   if (confirm("Yakin mau hapus?")) {
                     router.delete(`/user/laporan/${item.id}`);
                   }
                 }}
-                className="cursor-pointer text-red-500 hover:scale-110 transition"
+                className="cursor-pointer text-red-500 hover:scale-110"
               >
                 🗑️
               </span>
@@ -105,6 +96,6 @@ export default function Index({ laporans }) {
 
       </div>
 
-    </div>
+    </UserLayout>
   );
 }
