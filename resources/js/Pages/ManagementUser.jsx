@@ -17,8 +17,8 @@ export default function ManagementUser({ users, filters }) {
     };
 
     const handleSearch = (e) => {
-        router.get('/users', 
-            { search: e.target.value, filter: filters.filter }, 
+        router.get('/users',
+            { search: e.target.value, filter: filters.filter },
             { preserveState: true, replace: true }
         );
     };
@@ -33,16 +33,16 @@ export default function ManagementUser({ users, filters }) {
             phone: user.phone || '',
             birth_date: user.birth_date || '',
             address: user.address || '',
-            photo: null 
+            photo: null
         });
         setView('edit');
     };
 
     const submitAction = (e) => {
         e.preventDefault();
-        const options = { 
+        const options = {
             onSuccess: () => { setView('list'); reset(); setPreviewPhoto(null); },
-            forceFormData: true 
+            forceFormData: true
         };
 
         if (view === 'add') {
@@ -64,12 +64,12 @@ export default function ManagementUser({ users, filters }) {
                                 <h2 className="text-3xl font-black text-slate-800 tracking-tight">Manajemen User</h2>
                                 <p className="text-slate-400 font-medium">Kelola data anggota tim kamu di sini.</p>
                             </div>
-                            
+
                             <div className="flex flex-wrap gap-3 w-full md:w-auto">
                                 <div className="relative flex-grow md:flex-grow-0">
-                                    <input 
-                                        type="text" 
-                                        placeholder="Cari nama user..." 
+                                    <input
+                                        type="text"
+                                        placeholder="Cari nama user..."
                                         className="w-full md:w-64 bg-white border-none rounded-2xl pl-12 pr-5 py-3 font-bold shadow-sm focus:ring-2 focus:ring-emerald-500"
                                         defaultValue={filters.search}
                                         onChange={handleSearch}
@@ -81,16 +81,18 @@ export default function ManagementUser({ users, filters }) {
 
                                 <div className="relative inline-block">
                                     <select
-                                        className="bg-white border-none rounded-2xl pl-5 pr-12 py-3 font-bold shadow-sm appearance-none cursor-pointer focus:ring-2 focus:ring-emerald-500"
-                                        onChange={(e) => router.get('/users', { filter: e.target.value, search: filters.search }, { preserveState: true })}
-                                        defaultValue={filters.filter || 'latest'}
+                                        className="appearance-none !bg-none bg-white border-none rounded-2xl pl-5 pr-12 py-3 font-bold shadow-sm cursor-pointer focus:ring-2 focus:ring-emerald-500 text-slate-700"
+                                        value={filters.filter || 'latest'}
+                                        onChange={(e) => router.get('/users', { ...filters, filter: e.target.value }, { preserveState: true })}
+                                        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                                     >
                                         <option value="latest">Terbaru</option>
                                         <option value="oldest">Terlama</option>
                                         <option value="az">A - Z</option>
+                                        <option value="za">Z - A</option>
                                     </select>
                                     <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
-                                        <Icon name="ChevronDown" size={16} />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                                     </div>
                                 </div>
 
@@ -106,9 +108,9 @@ export default function ManagementUser({ users, filters }) {
                                     <div key={user.id} className="flex items-center justify-between p-5 bg-white border border-gray-50 rounded-[24px] hover:shadow-xl transition-all">
                                         <div className="flex items-center gap-5">
                                             <div className="w-14 h-14 bg-slate-100 rounded-2xl overflow-hidden border border-gray-100 shadow-inner">
-                                                <img 
-                                                    src={user.photo ? `/storage/${user.photo}` : `https://ui-avatars.com/api/?name=${user.name}`} 
-                                                    className="w-full h-full object-cover" 
+                                                <img
+                                                    src={user.photo ? `/storage/${user.photo}` : `https://ui-avatars.com/api/?name=${user.name}`}
+                                                    className="w-full h-full object-cover"
                                                     onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${user.name}` }}
                                                 />
                                             </div>
@@ -177,17 +179,14 @@ export default function ManagementUser({ users, filters }) {
                 {view === 'detail' && selectedUser && (
                     <div className="max-w-3xl mx-auto bg-white rounded-[40px] p-16 shadow-2xl border border-gray-50 text-center relative animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <button onClick={() => setView('list')} className="absolute top-10 left-10 text-gray-300 hover:text-slate-800 transition"><Icon name="X" size={30} /></button>
-                        
                         <div className="w-44 h-44 bg-slate-100 rounded-[48px] mx-auto mb-8 overflow-hidden border-8 border-white shadow-2xl">
-                            <img 
-                                src={selectedUser.photo ? `/storage/${selectedUser.photo}` : `https://ui-avatars.com/api/?name=${selectedUser.name}`} 
-                                className="w-full h-full object-cover" 
+                            <img
+                                src={selectedUser.photo ? `/storage/${selectedUser.photo}` : `https://ui-avatars.com/api/?name=${selectedUser.name}`}
+                                className="w-full h-full object-cover"
                                 onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${selectedUser.name}` }}
                             />
                         </div>
-                        
                         <h2 className="text-4xl font-black mb-12 tracking-tight text-slate-800">{selectedUser.name}</h2>
-
                         <div className="grid grid-cols-2 gap-4 text-left">
                             <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">NIP Pegawai</p>

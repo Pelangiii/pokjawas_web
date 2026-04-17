@@ -11,26 +11,28 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     public function index(Request $request)
-{
-    $query = User::query();
+    {
+        $query = User::query();
 
-    if ($request->search) {
-        $query->where('name', 'like', $request->search . '%');
+        if ($request->search) {
+            $query->where('name', 'like', $request->search . '%');
+        }
+
+        if ($request->filter === 'az') {
+            $query->orderBy('name', 'asc');
+        } elseif ($request->filter === 'za') {
+            $query->orderBy('name', 'desc');
+        } elseif ($request->filter === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        return Inertia::render('ManagementUser', [
+            'users' => $query->get(), 
+            'filters' => $request->only(['search', 'filter'])
+        ]);
     }
-
-    if ($request->filter === 'az') {
-        $query->orderBy('name', 'asc');
-    } elseif ($request->filter === 'oldest') {
-        $query->orderBy('created_at', 'asc');
-    } else {
-        $query->orderBy('created_at', 'desc');
-    }
-
-    return Inertia::render('ManagementUser', [
-        'users' => $query->get(),
-        'filters' => $request->only(['search', 'filter'])
-    ]);
-}
 
     public function store(Request $request)
     {
