@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.clip-visi {
+    clip-path: polygon(
+        60% 100%,   /* kiri bawah (lebih panjang) */
+        100% 100%,  /* kanan bawah */
+        100% 0,     /* kanan atas */
+        70% 0       /* kiri atas (lebih pendek) */
+    );
+    border-bottom-right-radius: 1.5rem; /* ngikutin rounded-3xl */
+}
+
+.clip-misi {
+    clip-path: polygon(
+        30% 100%,   /* kiri bawah (lebih panjang) */
+        100% 100%,  /* kanan bawah */
+        100% 0,     /* kanan atas */
+        40% 0       /* kiri atas (lebih pendek) */
+    );
+    border-bottom-right-radius: 1.5rem;
+}
