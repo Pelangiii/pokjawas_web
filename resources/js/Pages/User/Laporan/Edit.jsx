@@ -4,16 +4,30 @@ import UserLayout from "@/Layouts/UserLayout";
 
 export default function Edit({ laporan }) {
   const [title, setTitle] = useState(laporan.title || "");
-  const [date, setDate] = useState(laporan.date || "");
   const [desc, setDesc] = useState(laporan.description || "");
+  const [image, setImage] = useState(null);
+
+  const [preview, setPreview] = useState(
+    laporan.image ? `/storage/${laporan.image}` : null
+  );
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const submit = (e) => {
     e.preventDefault();
 
-    router.put(`/user/laporan/${laporan.id}`, {
+    router.post(`/user/laporan/${laporan.id}`, {
+      _method: "put", // 🔥 penting buat laravel
       title,
-      date,
       description: desc,
+      image,
     });
   };
 
@@ -32,50 +46,46 @@ export default function Edit({ laporan }) {
             ✖
           </button>
 
-          {/* FORM */}
           <form onSubmit={submit} className="flex flex-col items-center">
 
             {/* IMAGE */}
-            <div className="w-80 h-48 border rounded-xl flex items-center justify-center mb-8 bg-gray-100">
-              <span className="text-gray-400">Preview Gambar</span>
-            </div>
+            <label className="w-80 h-48 border rounded-xl flex items-center justify-center mb-8 bg-gray-100 overflow-hidden cursor-pointer">
+              {preview ? (
+                <img src={preview} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-gray-400">Upload Gambar</span>
+              )}
+
+              <input type="file" className="hidden" onChange={handleImage} />
+            </label>
 
             {/* INPUT */}
             <div className="w-full max-w-2xl space-y-5">
 
-              {/* TITLE */}
               <input
                 type="text"
                 placeholder="Judul"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border px-5 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full border px-5 py-3 rounded-xl"
               />
 
-              {/* DATE */}
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full border px-5 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-600"
-              />
+              {/* ❌ DATE DIHAPUS (karena auto dari created_at) */}
 
-              {/* DESCRIPTION */}
               <textarea
                 placeholder="Deskripsi"
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
                 rows="6"
-                className="w-full border px-5 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full border px-5 py-3 rounded-xl"
               />
 
             </div>
 
-            {/* BUTTON */}
             <div className="w-full max-w-2xl flex justify-end mt-8">
               <button
                 type="submit"
-                className="bg-green-700 text-white px-8 py-3 rounded-full hover:bg-green-800 transition"
+                className="bg-green-700 text-white px-8 py-3 rounded-full"
               >
                 Simpan Perubahan
               </button>

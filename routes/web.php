@@ -66,8 +66,10 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     Route::get('/laporan/create', [LaporanController::class, 'create']);
     Route::post('/laporan', [LaporanController::class, 'store']);
+    Route::get('/laporan/{id}', [LaporanController::class, 'show']);
     Route::get('/laporan/{id}/edit', [LaporanController::class, 'edit']);
     Route::put('/laporan/{id}', [LaporanController::class, 'update']);
+    Route::delete('/laporan/{id}', [LaporanController::class, 'destroy']);
 
 });
 

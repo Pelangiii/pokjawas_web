@@ -9,6 +9,8 @@ class Laporan extends Model
     protected $fillable = [
     'user_id',
     'title',
+    'description', 
+    'image', 
 ];
 
     public function user()

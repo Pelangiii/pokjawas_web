@@ -4,7 +4,6 @@ import UserLayout from "@/Layouts/UserLayout";
 
 export default function Create() {
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -23,9 +22,10 @@ export default function Create() {
 
     router.post('/user/laporan', {
       title,
-      date,
-      desc,
+      description: desc, // 🔥 harus sama dengan backend
       image
+    }, {
+      forceFormData: true // 🔥 penting buat upload file
     });
   };
 
@@ -77,12 +77,12 @@ export default function Create() {
               className="w-full border border-gray-300 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700"
             />
 
-            {/* INPUT TANGGAL */}
+            {/* INPUT TANGGAL (AUTO) */}
             <input
               type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full border border-gray-300 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-700"
+              value={new Date().toISOString().split("T")[0]}
+              disabled
+              className="w-full border border-gray-300 px-4 py-3 rounded-xl bg-gray-100"
             />
 
             {/* TEXTAREA DESKRIPSI */}

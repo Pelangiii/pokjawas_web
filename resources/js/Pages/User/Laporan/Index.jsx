@@ -66,7 +66,6 @@ export default function Index({ laporans }) {
 
               <span
                 onClick={() => router.get(`/user/laporan/${item.id}`)}
-                className="cursor-pointer text-blue-500 hover:scale-110"
               >
                 👁️
               </span>
