@@ -2,13 +2,15 @@
 
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\LaporanController;
+use App\Models\Laporan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-
-
+/* ================= LANDING ================= */
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -18,92 +20,63 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+/* ================= DASHBOARD & UMUM ================= */
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 
-// UPDATE ROUTE MANAJEMEN - tambah name dan middleware
-Route::get('/manajemen', function () {
-    return Inertia::render('Manajemen');
-})->middleware(['auth'])->name('Manajemen');
+    // Route Manajemen Berita
+    Route::get('/manajemen', [BeritaController::class, 'index'])->name('manajemen.index');
+    Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
+    Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+    Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-// Route::get('/berita/create', function () {
-//     return Inertia::render('Berita/Create');
-// });
+    // Route Manajemen User (Tugas utama kita tadi)
+    Route::resource('/users', UserController::class);
+});
 
-Route::get('/berita', [BeritaController::class, 'index']);
-
-Route::post('/berita', [BeritaController::class, 'store'])
-    ->middleware(['auth']);
-
-Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
-
-// Proses Simpan Data
-Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
-
-// Halaman utama manajemen
-Route::get('/manajemen', [BeritaController::class, 'index'])->name('manajemen.index');
-
-// Halaman buat input berita (Ini yang tadi error karena fungsinya ga ada)
-Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
-
-// Proses nyimpen datanya
-Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
-
-// Proses hapus
-Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
-// / ============ ROUTE BERITA ============.                                                  Z  
-// // Halaman manajemen berita (pake controller)
-// Route::get('/manajemen', [BeritaController::class, 'index'])
-//     ->middleware(['auth'])
-//     ->name('manajemen');
-
-// // Halaman create berita (kalo lo pake halaman terpisah)
-// Route::get('/berita/create', function () {
-//     return Inertia::render('Berita/Create');
-// })->middleware(['auth'])->name('berita.create');
-
-// // Proses simpan berita
-// Route::post('/berita', [BeritaController::class, 'store'])
-//     ->middleware(['auth']);
-
-// // Hapus berita
-// Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])
-//     ->middleware(['auth']);
-
-// // Edit berita (nanti kalo butuh)
-// Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])
-//     ->middleware(['auth'])
-//     ->name('berita.edit');
-
-// // Update berita
-// Route::put('/berita/{id}', [BeritaController::class, 'update'])
-//     ->middleware(['auth']);
-
-// Route::post('/berita', [BeritaController::class, 'store']);
-Route::resource('/users', UserController::class);
-
+/* ================= PROFILE ================= */
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/admin/dashboard', function () {
+/* ================= ADMIN AREA ================= */
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', function () {
         return Inertia::render('AdminDashboard');
-    });
+    })->name('admin.dashboard');
 
-    Route::get('/admin/users', function () {
+    Route::get('/users-list', function () {
         return Inertia::render('Admin/Users/Index');
     })->name('admin.users');
-
 });
 
-Route::get('/user/dashboard', function () {
-    return Inertia::render('UserDashboard');
+/* ================= USER AREA ================= */
+Route::middleware(['auth'])->prefix('user')->group(function () {
+    
+    // Dashboard User dengan data Laporan
+    Route::get('/dashboard', function () {
+        $laporans = Laporan::where('user_id', Auth::id())
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return Inertia::render('User/UserDashboard', [
+            'laporans' => $laporans
+        ]);
+    })->name('user.dashboard');
+
+    // CRUD Laporan
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('user.laporan');
+    Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
+    Route::post('/laporan', [LaporanController::class, 'store'])->name('laporan.store');
+    Route::get('/laporan/{id}', [LaporanController::class, 'show'])->name('laporan.show');
+    Route::get('/laporan/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
+    Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+    Route::delete('/laporan/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
 });
 
-require __DIR__.'/auth.php';
 require __DIR__.'/auth.php';
