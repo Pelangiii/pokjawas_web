@@ -13,15 +13,19 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('id', '!=', Auth::id());
+        // LOGIKA BARU: Ambil yang rolenya 'pegawai' 
+        // DAN pastikan ID-nya bukan ID admin yang sedang login (Double Protection)
+        $query = User::where('role', 'pegawai')
+                     ->where('id', '!=', Auth::id());
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', $request->search . '%')
-                  ->orWhere('email', 'like', $request->search . '%');
+                    ->orWhere('email', 'like', $request->search . '%');
             });
         }
 
+        // Sorting Logic
         if ($request->filter === 'az') {
             $query->orderBy('name', 'asc');
         } elseif ($request->filter === 'za') {
@@ -33,7 +37,8 @@ class UserController extends Controller
         }
 
         return Inertia::render('ManagementUser', [
-            'users' => $query->get(), 
+            // Kita pakai get() untuk mengambil datanya
+            'users' => $query->get(),
             'filters' => $request->only(['search', 'filter'])
         ]);
     }
@@ -58,18 +63,19 @@ class UserController extends Controller
             'birth_date' => $request->birth_date,
             'address' => $request->address,
             'photo' => $photoPath,
+            'role' => 'pegawai', // User yang ditambah manual selalu jadi pegawai
         ]);
 
-        return redirect('/users');
+        return redirect()->back(); // Redirect back lebih aman untuk Inertia
     }
 
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
         ]);
 
         $data = $request->only(['name', 'email', 'nip', 'phone', 'address', 'birth_date']);
@@ -84,13 +90,13 @@ class UserController extends Controller
         }
 
         $user->update($data);
-        return redirect('/users');
+        return redirect()->back();
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
- 
+
         if ($id == Auth::id()) {
             return redirect()->back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
         }

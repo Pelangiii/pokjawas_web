@@ -27,30 +27,21 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    // public function store(LoginRequest $request): RedirectResponse
-    // {
-    //     $request->authenticate();
-
-    //     $request->session()->regenerate();
-
-        // return redirect()->intended(route('dashboard', absolute: false));
-         // Redirect ke halaman manajemen setelah login
-        //  return redirect()->intended(route('manajemen'));
-
-
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
-    $request->session()->regenerate();
+    {
+        $request->authenticate();
 
-    // Cek apakah route 'manajemen' sudah ada
-    if (!Route::has('manajemen')) {
-        // Fallback ke dashboard atau home
-        return redirect()->intended('/');
+        // Regenerate session untuk keamanan dan membersihkan data session lama
+        $request->session()->regenerate();
+
+        // Redirect ke 'manajemen' jika ada, jika tidak ke dashboard default
+        if (Route::has('manajemen')) {
+            return redirect()->intended(route('manajemen'));
+        }
+        
+        return redirect()->intended(route('dashboard', absolute: false));
     }
-    
-    return redirect()->intended(route('manajemen'));
-}
+
     /**
      * Destroy an authenticated session.
      */
@@ -58,8 +49,10 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
+        // Menghapus semua data session agar tidak ada data user sebelumnya yang nyangkut
         $request->session()->invalidate();
 
+        // Membuat CSRF token baru demi keamanan
         $request->session()->regenerateToken();
 
         return redirect('/');
