@@ -50,7 +50,7 @@ export default function Show({ laporan }) {
 
           <div className="flex gap-2">
             <span className="font-semibold w-40">Nama Pegawai :</span>
-            <span>Leon Scott</span>
+            <span>{laporan.user?.name}</span>
           </div>
 
           <div className="flex gap-2">

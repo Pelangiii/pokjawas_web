@@ -30,8 +30,12 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => 'required',
-            'avatar' => 'nullable|image|max:2048'
+           'name' => 'required',
+        'phone' => 'nullable',
+        'nip' => 'nullable',
+        'address' => 'nullable',
+        'birth_date' => 'nullable|date',
+        'avatar' => 'nullable|image|max:2048'
         ]);
 
         // ✅ upload foto kalau ada
@@ -42,7 +46,11 @@ class ProfileController extends Controller
 
         // ✅ update data
         $user->update([
-            'name' => $request->name
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'nip' => $request->nip,
+            'address' => $request->address,
+            'birth_date' => $request->birth_date
         ]);
 
         return redirect('/user/profile');

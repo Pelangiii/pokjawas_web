@@ -1,12 +1,17 @@
 import React from "react";
 import UserLayout from "@/Layouts/UserLayout";
+import { usePage } from "@inertiajs/react";
 
 export default function UserDashboard({ laporans }) {
+
+  // ✅ PINDAHIN KE DALAM COMPONENT
+  const { props } = usePage();
+  const user = props.auth?.user;
 
   const getStatusColor = (status) => {
     if (status === "Diterima") return "bg-green-600";
     if (status === "Revisi") return "bg-red-600";
-    return "bg-blue-700"; // default = Proses
+    return "bg-blue-700";
   };
 
   return (
@@ -15,7 +20,7 @@ export default function UserDashboard({ laporans }) {
       {/* WELCOME */}
       <div className="bg-gradient-to-r from-green-700 to-green-600 text-white p-6 rounded-2xl mb-8">
         <h2 className="text-xl font-semibold">
-          Selamat Datang 👋
+          Selamat Datang {user?.name} 👋
         </h2>
         <p className="text-sm opacity-90">
           Ini adalah ringkasan aktivitas Anda

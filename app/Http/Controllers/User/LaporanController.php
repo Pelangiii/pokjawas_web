@@ -7,13 +7,14 @@ use App\Models\Laporan;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // 🔥 WAJIB
+use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
     public function index()
     {
         $laporans = Laporan::where('user_id', Auth::id())
+            ->where('user_id', Auth::id())
             ->latest()
             ->get();
 
@@ -37,7 +38,6 @@ class LaporanController extends Controller
 
         $imagePath = null;
 
-        // 🔥 upload image
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('laporan', 'public');
         }
@@ -52,9 +52,10 @@ class LaporanController extends Controller
         return redirect('/user/laporan');
     }
 
+    // 🔥 FIX DI SINI (TAMBAH with('user'))
     public function show($id)
     {
-        $laporan = Laporan::findOrFail($id);
+        $laporan = Laporan::with('user')->findOrFail($id);
 
         return Inertia::render('User/Laporan/Show', [
             'laporan' => $laporan
@@ -80,10 +81,8 @@ class LaporanController extends Controller
             'image' => 'nullable|image|max:2048'
         ]);
 
-        // 🔥 kalau upload gambar baru
         if ($request->hasFile('image')) {
 
-            // hapus gambar lama
             if ($laporan->image) {
                 Storage::disk('public')->delete($laporan->image);
             }
@@ -104,7 +103,6 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::findOrFail($id);
 
-        // 🔥 hapus gambar dari storage
         if ($laporan->image) {
             Storage::disk('public')->delete($laporan->image);
         }

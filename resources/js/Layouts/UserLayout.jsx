@@ -3,15 +3,14 @@ import { router, usePage } from "@inertiajs/react";
 
 export default function UserLayout({ children, title }) {
 
-  const { props } = usePage();
-  const user = props.auth?.user; // 🔥 ambil user login
-
-  const currentPath = window.location.pathname;
+  const { props, url } = usePage(); // 🔥 FIX DISINI
+  const user = props.auth?.user;
+  const currentPath = url; // 🔥 FIX DISINI
 
   const menuClass = (path) =>
     `flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer transition
     ${
-      currentPath === path
+      currentPath.startsWith(path)
         ? "bg-green-50 text-green-700 font-medium"
         : "text-gray-500 hover:bg-gray-100"
     }`;
@@ -86,23 +85,21 @@ export default function UserLayout({ children, title }) {
 
             {/* PROFILE */}
             <div
-              onClick={() => router.get('/user/profile')} // 🔥 FIX DISINI
+              onClick={() => router.get('/user/profile')}
               className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition"
             >
 
-              {/* FOTO */}
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold">
                 {user?.avatar ? (
                   <img
                     src={`/storage/${user.avatar}`}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  user?.name?.charAt(0) || "U"
+                  user?.name?.charAt(0)?.toUpperCase() || "U"
                 )}
               </div>
 
-              {/* NAMA */}
               <div className="text-sm">
                 <p className="font-medium">
                   {user?.name || "User"}
@@ -117,7 +114,6 @@ export default function UserLayout({ children, title }) {
           </div>
         </div>
 
-        {/* ISI HALAMAN */}
         {children}
 
       </main>
