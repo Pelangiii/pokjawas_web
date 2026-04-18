@@ -7,15 +7,19 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::where('id', '!=', Auth::id());
 
         if ($request->search) {
-            $query->where('name', 'like', $request->search . '%');
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', $request->search . '%')
+                  ->orWhere('email', 'like', $request->search . '%');
+            });
         }
 
         if ($request->filter === 'az') {
@@ -86,6 +90,11 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+ 
+        if ($id == Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
         if ($user->photo) Storage::disk('public')->delete($user->photo);
         $user->delete();
         return redirect()->back();
