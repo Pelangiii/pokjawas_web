@@ -1,7 +1,10 @@
 import React from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
 export default function UserLayout({ children, title }) {
+
+  const { props } = usePage();
+  const user = props.auth?.user; // 🔥 ambil user login
 
   const currentPath = window.location.pathname;
 
@@ -83,16 +86,32 @@ export default function UserLayout({ children, title }) {
 
             {/* PROFILE */}
             <div
-              onClick={() => router.get('/profile')}
+              onClick={() => router.get('/user/profile')} // 🔥 FIX DISINI
               className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition"
             >
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-semibold">
-                LS
+
+              {/* FOTO */}
+              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden">
+                {user?.avatar ? (
+                  <img
+                    src={`/storage/${user.avatar}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user?.name?.charAt(0) || "U"
+                )}
               </div>
+
+              {/* NAMA */}
               <div className="text-sm">
-                <p className="font-medium">Leon Scott</p>
-                <p className="text-xs text-gray-400">PEGAWAI</p>
+                <p className="font-medium">
+                  {user?.name || "User"}
+                </p>
+                <p className="text-xs text-gray-400">
+                  PEGAWAI
+                </p>
               </div>
+
             </div>
 
           </div>

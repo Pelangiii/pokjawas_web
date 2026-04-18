@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\BeritaController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\User\LaporanController;
+use App\Http\Controllers\User\ProfileController as UserProfileController; // 🔥 FIX
 use App\Models\Laporan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -22,29 +22,24 @@ Route::get('/', function () {
 
 /* ================= DASHBOARD & UMUM ================= */
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    // Route Manajemen Berita
+    // BERITA
     Route::get('/manajemen', [BeritaController::class, 'index'])->name('manajemen.index');
     Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-    // Route Manajemen User (Tugas utama kita tadi)
+    // USER MANAGEMENT
     Route::resource('/users', UserController::class);
-});
-
-/* ================= PROFILE ================= */
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 /* ================= ADMIN AREA ================= */
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('AdminDashboard');
     })->name('admin.dashboard');
@@ -56,8 +51,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
 /* ================= USER AREA ================= */
 Route::middleware(['auth'])->prefix('user')->group(function () {
-    
-    // Dashboard User dengan data Laporan
+
+    // ✅ DASHBOARD USER
     Route::get('/dashboard', function () {
         $laporans = Laporan::where('user_id', Auth::id())
             ->latest()
@@ -69,14 +64,19 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         ]);
     })->name('user.dashboard');
 
-    // CRUD Laporan
+    // ✅ LAPORAN
     Route::get('/laporan', [LaporanController::class, 'index'])->name('user.laporan');
-    Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
-    Route::post('/laporan', [LaporanController::class, 'store'])->name('laporan.store');
-    Route::get('/laporan/{id}', [LaporanController::class, 'show'])->name('laporan.show');
-    Route::get('/laporan/{id}/edit', [LaporanController::class, 'edit'])->name('laporan.edit');
-    Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-    Route::delete('/laporan/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
+    Route::get('/laporan/create', [LaporanController::class, 'create']);
+    Route::post('/laporan', [LaporanController::class, 'store']);
+    Route::get('/laporan/{id}', [LaporanController::class, 'show']);
+    Route::get('/laporan/{id}/edit', [LaporanController::class, 'edit']);
+    Route::put('/laporan/{id}', [LaporanController::class, 'update']);
+    Route::delete('/laporan/{id}', [LaporanController::class, 'destroy']);
+
+    // ✅ PROFILE USER (FIX UTAMA DI SINI)
+    Route::get('/profile', [UserProfileController::class, 'index'])->name('user.profile');
+    Route::get('/profile/edit', [UserProfileController::class, 'edit']);
+    Route::post('/profile', [UserProfileController::class, 'update']);
 });
 
 require __DIR__.'/auth.php';
