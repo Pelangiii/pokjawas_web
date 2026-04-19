@@ -12,6 +12,7 @@ class Laporan extends Model
     'description', 
     'image', 
     'status', 
+    'feedback',
 ];
 
     public function user()

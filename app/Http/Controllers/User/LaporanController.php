@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
+    // 🔥 LIST LAPORAN USER
     public function index()
     {
         $laporans = Laporan::with('user')
@@ -23,6 +24,7 @@ class LaporanController extends Controller
         ]);
     }
 
+    // 🔥 HALAMAN CREATE
     public function create()
     {
         return Inertia::render('User/Laporan/Create');
@@ -32,7 +34,7 @@ class LaporanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'nullable', // 🔥 draft boleh kosong
+            'title' => 'nullable', // draft boleh kosong
             'description' => 'nullable',
             'image' => 'nullable|image|max:2048',
             'status' => 'nullable|string'
@@ -49,12 +51,14 @@ class LaporanController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,
-            'status' => $request->status ?? 'draft', // 🔥 DEFAULT DRAFT
+            'status' => $request->status ?? 'draft', // default draft
+            'feedback' => null
         ]);
 
         return redirect('/user/laporan');
     }
 
+    // 🔥 DETAIL LAPORAN
     public function show($id)
     {
         $laporan = Laporan::with('user')->findOrFail($id);
@@ -64,6 +68,7 @@ class LaporanController extends Controller
         ]);
     }
 
+    // 🔥 EDIT PAGE
     public function edit($id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -73,38 +78,47 @@ class LaporanController extends Controller
         ]);
     }
 
-    // 🔥 UPDATE (BISA EDIT + UBAH STATUS)
+    // 🔥 UPDATE (EDIT + HANDLE REVISI)
     public function update(Request $request, $id)
     {
         $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'title' => 'nullable', // 🔥 biar draft tetap bisa
+            'title' => 'nullable',
             'description' => 'nullable',
             'image' => 'nullable|image|max:2048',
             'status' => 'nullable|string'
         ]);
 
-        // 🔥 upload gambar baru
+        // 🔥 HANDLE IMAGE
         if ($request->hasFile('image')) {
 
             if ($laporan->image) {
                 Storage::disk('public')->delete($laporan->image);
             }
 
-            $imagePath = $request->file('image')->store('laporan', 'public');
-            $laporan->image = $imagePath;
+            $laporan->image = $request->file('image')->store('laporan', 'public');
+        }
+
+        // 🔥 LOGIC STATUS
+        $newStatus = $request->status ?? $laporan->status;
+
+        // kalau sebelumnya revisi → balik ke proses
+        if ($laporan->status === 'revisi') {
+            $newStatus = 'proses';
         }
 
         $laporan->update([
             'title' => $request->title,
             'description' => $request->description,
-            'status' => $request->status ?? $laporan->status, // 🔥 update status
+            'status' => $newStatus,
+            'feedback' => null // reset feedback setelah user edit
         ]);
 
         return redirect('/user/laporan');
     }
 
+    // 🔥 DELETE
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);
