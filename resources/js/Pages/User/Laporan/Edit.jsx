@@ -20,14 +20,31 @@ export default function Edit({ laporan }) {
     }
   };
 
+  // 🔥 SIMPAN FINAL
   const submit = (e) => {
     e.preventDefault();
 
     router.post(`/user/laporan/${laporan.id}`, {
-      _method: "put", // 🔥 penting buat laravel
+      _method: "put",
       title,
       description: desc,
       image,
+      status: "published", // 🔥 FINAL
+    }, {
+      forceFormData: true,
+    });
+  };
+
+  // 🔥 SIMPAN DRAFT
+  const saveDraft = () => {
+    router.post(`/user/laporan/${laporan.id}`, {
+      _method: "put",
+      title,
+      description: desc,
+      image,
+      status: "draft", // 🔥 DRAFT
+    }, {
+      forceFormData: true,
     });
   };
 
@@ -70,8 +87,6 @@ export default function Edit({ laporan }) {
                 className="w-full border px-5 py-3 rounded-xl"
               />
 
-              {/* ❌ DATE DIHAPUS (karena auto dari created_at) */}
-
               <textarea
                 placeholder="Deskripsi"
                 value={desc}
@@ -82,13 +97,26 @@ export default function Edit({ laporan }) {
 
             </div>
 
-            <div className="w-full max-w-2xl flex justify-end mt-8">
+            {/* 🔥 BUTTON */}
+            <div className="w-full max-w-2xl flex justify-between mt-8">
+
+              {/* DRAFT */}
+              <button
+                type="button"
+                onClick={saveDraft}
+                className="bg-gray-400 text-white px-6 py-3 rounded-xl"
+              >
+                Simpan Draft
+              </button>
+
+              {/* FINAL */}
               <button
                 type="submit"
-                className="bg-green-700 text-white px-8 py-3 rounded-full"
+                className="bg-green-700 text-white px-8 py-3 rounded-xl"
               >
                 Simpan Perubahan
               </button>
+
             </div>
 
           </form>

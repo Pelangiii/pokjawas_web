@@ -13,7 +13,7 @@ class LaporanController extends Controller
 {
     public function index()
     {
-        $laporans = Laporan::where('user_id', Auth::id())
+        $laporans = Laporan::with('user')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -28,12 +28,14 @@ class LaporanController extends Controller
         return Inertia::render('User/Laporan/Create');
     }
 
+    // 🔥 STORE (SUPPORT DRAFT)
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'title' => 'nullable', // 🔥 draft boleh kosong
             'description' => 'nullable',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
+            'status' => 'nullable|string'
         ]);
 
         $imagePath = null;
@@ -46,13 +48,13 @@ class LaporanController extends Controller
             'user_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
-            'image' => $imagePath
+            'image' => $imagePath,
+            'status' => $request->status ?? 'draft', // 🔥 DEFAULT DRAFT
         ]);
 
         return redirect('/user/laporan');
     }
 
-    // 🔥 FIX DI SINI (TAMBAH with('user'))
     public function show($id)
     {
         $laporan = Laporan::with('user')->findOrFail($id);
@@ -71,16 +73,19 @@ class LaporanController extends Controller
         ]);
     }
 
+    // 🔥 UPDATE (BISA EDIT + UBAH STATUS)
     public function update(Request $request, $id)
     {
         $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'title' => 'required',
+            'title' => 'nullable', // 🔥 biar draft tetap bisa
             'description' => 'nullable',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
+            'status' => 'nullable|string'
         ]);
 
+        // 🔥 upload gambar baru
         if ($request->hasFile('image')) {
 
             if ($laporan->image) {
@@ -94,6 +99,7 @@ class LaporanController extends Controller
         $laporan->update([
             'title' => $request->title,
             'description' => $request->description,
+            'status' => $request->status ?? $laporan->status, // 🔥 update status
         ]);
 
         return redirect('/user/laporan');
