@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
+import Swal from "sweetalert2"; // 🔥 TAMBAH INI
 
 export default function Index({ laporans = [] }) {
 
@@ -39,7 +40,7 @@ export default function Index({ laporans = [] }) {
       {/* SEARCH + ACTION */}
       <div className="flex justify-between items-center mb-6">
 
-        {/* 🔥 SEARCH */}
+        {/* SEARCH */}
         <div className="relative w-96">
           <input
             type="text"
@@ -132,7 +133,7 @@ export default function Index({ laporans = [] }) {
                 {/* LEFT */}
                 <div className="flex items-center gap-4">
 
-                  {/* 🔥 FOTO PROFILE USER LOGIN */}
+                  {/* AVATAR */}
                   <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold">
                     {user.avatar ? (
                       <img
@@ -145,7 +146,7 @@ export default function Index({ laporans = [] }) {
                     )}
                   </div>
 
-                  {/* 🔥 NAMA USER + TITLE */}
+                  {/* NAMA + TITLE */}
                   <div>
                     <p className="font-semibold text-gray-800 text-lg">
                       {user.name || "User"}
@@ -155,7 +156,7 @@ export default function Index({ laporans = [] }) {
                       {item.title}
                     </p>
 
-                    {/* 🔥 STATUS DRAFT */}
+                    {/* STATUS */}
                     {item.status === "draft" && (
                       <span className="text-xs text-yellow-500">
                         Draft
@@ -182,11 +183,28 @@ export default function Index({ laporans = [] }) {
                     ✏️
                   </span>
 
+                  {/* 🔥 DELETE DENGAN POPUP */}
                   <span
                     onClick={() => {
-                      if (confirm("Yakin mau hapus?")) {
-                        router.delete(`/user/laporan/${item.id}`);
-                      }
+                      Swal.fire({
+                        title: "Yakin mau hapus?",
+                        text: "Data tidak bisa dikembalikan!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        confirmButtonText: "Hapus",
+                        cancelButtonText: "Batal"
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          router.delete(`/user/laporan/${item.id}`);
+
+                          Swal.fire(
+                            "Terhapus!",
+                            "Laporan berhasil dihapus",
+                            "success"
+                          );
+                        }
+                      });
                     }}
                     className="cursor-pointer text-red-500 hover:scale-110"
                   >
