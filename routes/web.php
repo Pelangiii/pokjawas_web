@@ -46,6 +46,9 @@ Route::get('/kegiatan', function () {
     return Inertia::render('Kegiatan/Kegiatan_Lain');
 })->name('kegiatan');
 
+Route::get('/struktur', function () {
+    return Inertia::render('Struktur_Anggota');
+})->name('struktur');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

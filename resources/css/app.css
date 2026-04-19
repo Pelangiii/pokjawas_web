@@ -21,3 +21,18 @@
     );
     border-bottom-right-radius: 1.5rem;
 }
+
+/* resources/css/app.css */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left { transform: translateX(-40px); }
+.reveal-right { transform: translateX(40px); }
+
+

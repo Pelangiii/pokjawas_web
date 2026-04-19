@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
+
 export default function Welcome({ auth }) {
         const featuredNews = [
         {
@@ -36,12 +37,32 @@ export default function Welcome({ auth }) {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const elements = document.querySelectorAll(".reveal");
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("show");
+                    }
+                });
+            },
+            { threshold: 0.15 }
+        );
+
+        elements.forEach((el) => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, []);
+    
+
     return (
         <>
             <Head title="Beranda" />
 
         {/* HERO SECTION */}
-            <section className="bg-gray-100 min-h-screen">
+            <section className="bg-gray-100 min-h-screen font-jakarta">
 
                 {/* TOP BAR */}
                 <div className="bg-green-800 text-white flex justify-between items-center">
@@ -66,11 +87,11 @@ export default function Welcome({ auth }) {
                         <div className="w-px h-8 bg-gray-300"></div>
                     </div>
 
-                    <div className="absolute left-1/2 -translate-x-1/2 flex gap-20 text-gray-600 font-medium font-jakarta">
-                        <Link href="/" className="text-green-600 font-semibold">Beranda</Link>
-                        <Link href="/struktur">Struktur Anggota</Link>
-                        <Link href="/berita">Berita</Link>
-                        <Link href="/kegiatan">Kegiatan</Link>
+                    <div className="absolute left-1/2 -translate-x-1/2 flex gap-20 text-gray-600 font-semibold font-jakarta">
+                        <Link href="/" className="text-green-600 transition duration-300">Beranda</Link>
+                        <Link href="/struktur" className="hover:text-green-600 transition duration-300">Profil</Link>
+                        <Link href="/berita" className="hover:text-green-600 transition duration-300">Berita</Link>
+                        <Link href="/kegiatan" className="hover:text-green-600 transition duration-300">Kegiatan</Link>
                     </div>
                 </div>
 
@@ -84,7 +105,7 @@ export default function Welcome({ auth }) {
 
                     <div className="max-w-7xl mx-auto mt-16 grid grid-cols-1 lg:grid-cols-2 gap-10 px-6 relative z-10 pb-20">
 
-                        <div className="pt-10 mt-8 font-jakarta">
+                        <div className="pt-10 mt-8 font-jakarta reveal reveal-left">
                             <h1 className="text-5xl font-bold text-gray-800 leading-tight">
                                 Pokjawas Kemenag <br />
                                 Kabupaten Tangerang
@@ -104,7 +125,7 @@ export default function Welcome({ auth }) {
                             </Link>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 reveal reveal-right">
 
                         {/* IMAGE 1 */}
                         <div className="overflow-hidden rounded-2xl group">
@@ -138,7 +159,7 @@ export default function Welcome({ auth }) {
 
                 {/* SAMBUTAN SECTION */}
                 <section className="py-20 bg-gray-100 font-jakarta">
-                    <div className="max-w-7xl mx-auto px-6">
+                    <div className="max-w-7xl mx-auto px-6 reveal">
 
                         {/* Title */}
                         <div className="text-center mb-12 relative inline-block w-full">
@@ -250,18 +271,18 @@ export default function Welcome({ auth }) {
                             <div>
 
                                 {/* TEXT ATAS VISI */}
-                                <h3 className="text-4xl font-bold text-gray-800 leading-snug mb-6">
+                                <h3 className="text-4xl font-bold text-gray-800 leading-snug mb-6 reveal reveal-left">
                                     KELOMPOK KERJA <br />
                                     PENGAWAS (POKJAWAS)
                                 </h3>
 
-                                <p className="text-gray-500 mb-10 font-medium text-lg">
+                                <p className="text-gray-500 mb-10 font-medium text-lg reveal reveal-left delay-200">
                                     Kementerian Agama Kantor 
                                     Kabupaten Tangerang
                                 </p>
 
                                 {/* CARD VISI */}
-                                <div className="relative bg-white rounded-3xl shadow-md px-8 py-10 mt-40">
+                                <div className="relative bg-white rounded-3xl shadow-md px-8 py-10 mt-40 reveal reveal-left">
 
                                     {/* Label */}
                                     <div className="absolute -top-5 left-1 bg-green-800 text-white px-10 py-2 rounded-xl font-semibold">
@@ -279,7 +300,7 @@ export default function Welcome({ auth }) {
                             </div>
 
                             {/* RIGHT SIDE (MISi) */}
-                            <div className="relative bg-white rounded-3xl shadow-md px-8 py-10">
+                            <div className="relative bg-white rounded-3xl shadow-md px-8 py-10 reveal reveal-right">
 
                                 {/* Label */}
                                 <div className="absolute -top-5 right-1 bg-green-800 text-white px-10 py-2 rounded-xl font-semibold">
@@ -308,7 +329,7 @@ export default function Welcome({ auth }) {
                     <div className="max-w-7xl mx-auto px-6">
 
                         {/* CARD PUTIH */}
-                        <div className="bg-white rounded-3xl shadow-md px-8 py-16">
+                        <div className="bg-white rounded-3xl shadow-md px-8 py-16 reveal">
 
                             <div className="flex items-center justify-between mb-10">
                                 {/* TITLE */}
@@ -324,10 +345,6 @@ export default function Welcome({ auth }) {
                                     Lihat Berita Lainnya →
                                 </Link>
                             </div>
-
-                            
-
-                            
 
                             {/* GRID */}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -456,7 +473,7 @@ export default function Welcome({ auth }) {
                         ))}
 
                         {/* GRID */}
-                        <div className="grid md:grid-cols-3 gap-6">
+                        <div className="grid md:grid-cols-3 gap-6 reveal">
 
                             {[1, 2, 3].map((item) => (
                                 <div key={item} className="bg-white rounded-2xl shadow-md overflow-hidden group">
@@ -499,7 +516,7 @@ export default function Welcome({ auth }) {
                 </section>
 
                 {/* Contact Us Section */}
-                <section className="bg-gray-100 py-20">
+                <section className="bg-gray-100 py-20 reveal">
                     <div className="relative max-w-4xl mx-auto px-6">
 
                         {/* CARD */}
