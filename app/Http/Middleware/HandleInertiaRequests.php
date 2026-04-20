@@ -21,12 +21,16 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
 
-            // 🔥 AUTH USER
             'auth' => [
                 'user' => $request->user(),
             ],
 
-            // 🔥 NOTIFICATIONS (AMAN DARI ERROR)
+            // 🔥 FLASH MESSAGE GLOBAL
+            'flash' => [
+                'success' => session('success'),
+            ],
+
+            // 🔥 NOTIF
             'notifications' => function () {
                 if (!Auth::check()) return [];
 

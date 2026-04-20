@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 
 export default function UserLayout({ children, title }) {
@@ -6,10 +6,24 @@ export default function UserLayout({ children, title }) {
   const { props, url } = usePage();
 
   const user = props.auth?.user;
-  const notifications = props.notifications || []; // 🔥 ANTI CRASH
+  const notifications = props.notifications || [];
+  const flash = props.flash || {};
+
   const currentPath = url;
 
   const [showNotif, setShowNotif] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+  // 🔥 TRIGGER POPUP
+  useEffect(() => {
+    if (flash.success) {
+      setShowPopup(true);
+
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
+    }
+  }, [flash.success]);
 
   const menuClass = (path) =>
     `flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer transition
@@ -21,6 +35,13 @@ export default function UserLayout({ children, title }) {
 
   return (
     <div className="flex bg-[#F5F7FB] min-h-screen">
+
+      {/* 🔥 POPUP SUCCESS */}
+      {showPopup && (
+        <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-[999] animate-bounce">
+          {flash.success}
+        </div>
+      )}
 
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r px-6 py-6 flex flex-col justify-between">
@@ -76,7 +97,7 @@ export default function UserLayout({ children, title }) {
 
             <div className="text-xl">📧</div>
 
-            {/* 🔥 NOTIFICATION */}
+            {/* 🔔 NOTIF */}
             <div className="relative">
               <div
                 className="text-xl cursor-pointer relative"
@@ -84,7 +105,6 @@ export default function UserLayout({ children, title }) {
               >
                 🔔
 
-                {/* 🔴 BADGE */}
                 {notifications.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
                     {notifications.length}
@@ -92,7 +112,6 @@ export default function UserLayout({ children, title }) {
                 )}
               </div>
 
-              {/* 🔥 DROPDOWN */}
               {showNotif && (
                 <div className="absolute right-0 mt-3 w-72 bg-white shadow-lg rounded-xl border z-50">
 

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Models\User; // 🔥 penting biar IDE ga error
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -30,21 +30,21 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
-           'name' => 'required',
-        'phone' => 'nullable',
-        'nip' => 'nullable',
-        'address' => 'nullable',
-        'birth_date' => 'nullable|date',
-        'avatar' => 'nullable|image|max:2048'
+            'name' => 'required',
+            'phone' => 'nullable',
+            'nip' => 'nullable',
+            'address' => 'nullable',
+            'birth_date' => 'nullable|date',
+            'avatar' => 'nullable|image|max:2048'
         ]);
 
-        // ✅ upload foto kalau ada
+        // upload avatar
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('profile', 'public');
             $user->avatar = $path;
         }
 
-        // ✅ update data
+        // update data
         $user->update([
             'name' => $request->name,
             'phone' => $request->phone,
@@ -53,6 +53,7 @@ class ProfileController extends Controller
             'birth_date' => $request->birth_date
         ]);
 
-        return redirect('/user/profile');
+        // 🔥 KIRIM FLASH MESSAGE
+        return redirect('/user/profile')->with('success', 'Profile berhasil diupdate!');
     }
 }
