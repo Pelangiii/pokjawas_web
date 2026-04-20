@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
+import { LayoutDashboard, FileText, Mail, Bell, LogOut } from "lucide-react";
 
 export default function UserLayout({ children, title }) {
 
@@ -13,29 +14,26 @@ export default function UserLayout({ children, title }) {
 
   const [showNotif, setShowNotif] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [showLogout, setShowLogout] = useState(false); // 🔥 NEW
+  const [showLogout, setShowLogout] = useState(false);
 
   // 🔥 POPUP SUCCESS
   useEffect(() => {
     if (flash.success) {
       setShowPopup(true);
-
-      setTimeout(() => {
-        setShowPopup(false);
-      }, 3000);
+      setTimeout(() => setShowPopup(false), 3000);
     }
   }, [flash.success]);
 
   const menuClass = (path) =>
-    `flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer transition
+    `flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition font-medium
     ${
       currentPath.startsWith(path)
-        ? "bg-green-50 text-green-700 font-medium"
+        ? "bg-green-100 text-green-700"
         : "text-gray-500 hover:bg-gray-100"
     }`;
 
   return (
-    <div className="flex bg-[#F5F7FB] min-h-screen">
+    <div className="flex min-h-screen bg-[#F4F6FA]">
 
       {/* 🔥 POPUP SUCCESS */}
       {showPopup && (
@@ -47,10 +45,9 @@ export default function UserLayout({ children, title }) {
       {/* 🔥 LOGOUT MODAL */}
       {showLogout && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
+          <div className="bg-white rounded-2xl p-6 w-80 shadow-xl">
 
-          <div className="bg-white rounded-2xl p-6 w-80 shadow-xl animate-[fadeIn_0.3s_ease]">
-
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+            <h2 className="text-lg font-semibold mb-2">
               Konfirmasi Logout
             </h2>
 
@@ -59,8 +56,6 @@ export default function UserLayout({ children, title }) {
             </p>
 
             <div className="flex justify-end gap-3">
-
-              {/* BATAL */}
               <button
                 onClick={() => setShowLogout(false)}
                 className="px-4 py-2 rounded-lg border hover:bg-gray-100"
@@ -68,90 +63,104 @@ export default function UserLayout({ children, title }) {
                 Batal
               </button>
 
-              {/* LOGOUT */}
               <button
                 onClick={() => router.post('/logout')}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                className="px-4 py-2 rounded-lg bg-red-500 text-white"
               >
                 Logout
               </button>
-
             </div>
 
           </div>
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r px-6 py-6 flex flex-col justify-between">
+      {/* ================= SIDEBAR ================= */}
+      <aside className="w-64 bg-white border-r flex flex-col justify-between p-6">
 
         <div>
+          {/* LOGO */}
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 bg-green-700 rounded-xl"></div>
+            <img
+              src="/logo.png" // ganti kalau ada logo asli
+              className="w-10 h-10 object-contain"
+            />
             <div>
-              <h1 className="text-sm font-semibold">Pokjawas Kemenag</h1>
-              <p className="text-xs text-gray-400">Kab. Tangerang</p>
+              <h1 className="font-semibold text-gray-800">
+                Pokjawas Kemenag
+              </h1>
+              <p className="text-xs text-gray-400">
+                Kabupaten Tangerang
+              </p>
             </div>
           </div>
 
-          <p className="text-gray-400 text-xs mb-4">MENU</p>
+          <p className="text-xs text-gray-400 mb-3">Menu</p>
 
-          <nav className="space-y-2 text-sm">
+          {/* MENU */}
+          <nav className="space-y-2">
+
             <div
               onClick={() => router.get('/user/dashboard')}
               className={menuClass('/user/dashboard')}
             >
-              📊 Dashboard
+              <LayoutDashboard size={18} />
+              Dashboard
             </div>
 
             <div
               onClick={() => router.get('/user/laporan')}
               className={menuClass('/user/laporan')}
             >
-              📄 Laporan
+              <FileText size={18} />
+              Laporan
             </div>
+
           </nav>
         </div>
 
-        {/* 🔥 LOGOUT BUTTON FIX */}
+        {/* LOGOUT */}
         <button
           onClick={() => setShowLogout(true)}
-          className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition"
+          className="flex items-center gap-2 text-gray-500 hover:text-red-500"
         >
-          🚪 Logout
+          <LogOut size={18} />
+          Logout
         </button>
 
       </aside>
 
-      {/* MAIN */}
-      <main className="flex-1 p-8">
+      {/* ================= MAIN ================= */}
+      <main className="flex-1">
 
-        {/* NAVBAR */}
-        <div className="flex justify-between items-center mb-8">
+        {/* ================= NAVBAR ================= */}
+        <div className="flex justify-between items-center px-8 py-6 bg-white border-b">
 
-          <h1 className="text-2xl font-semibold text-gray-800">
+          {/* TITLE */}
+          <h1 className="text-3xl font-semibold text-gray-800">
             {title}
           </h1>
 
-          <div className="flex items-center gap-5 relative">
+          <div className="flex items-center gap-6">
 
-            <div className="text-xl">📧</div>
+            {/* ICON */}
+            <Mail className="text-gray-500" size={20} />
 
-            {/* 🔔 NOTIF */}
+            {/* 🔔 NOTIFICATION */}
             <div className="relative">
-              <div
-                className="text-xl cursor-pointer relative"
+              <Bell
+                size={20}
+                className="cursor-pointer text-gray-500"
                 onClick={() => setShowNotif(!showNotif)}
-              >
-                🔔
+              />
 
-                {notifications.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
-                    {notifications.length}
-                  </span>
-                )}
-              </div>
+              {notifications.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                  {notifications.length}
+                </span>
+              )}
 
+              {/* DROPDOWN */}
               {showNotif && (
                 <div className="absolute right-0 mt-3 w-72 bg-white shadow-lg rounded-xl border z-50">
 
@@ -182,25 +191,17 @@ export default function UserLayout({ children, title }) {
               )}
             </div>
 
+            {/* DIVIDER */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
             {/* PROFILE */}
             <div
               onClick={() => router.get('/user/profile')}
-              className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow cursor-pointer"
+              className="flex items-center gap-3 cursor-pointer"
             >
 
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold">
-                {user?.avatar ? (
-                  <img
-                    src={`/storage/${user.avatar}`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  user?.name?.charAt(0)?.toUpperCase() || "U"
-                )}
-              </div>
-
-              <div className="text-sm">
-                <p className="font-medium">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800">
                   {user?.name || "User"}
                 </p>
                 <p className="text-xs text-gray-400">
@@ -208,12 +209,26 @@ export default function UserLayout({ children, title }) {
                 </p>
               </div>
 
+              <div className="w-10 h-10 rounded-xl bg-gray-200 flex items-center justify-center overflow-hidden font-semibold">
+                {user?.avatar ? (
+                  <img
+                    src={`/storage/${user.avatar}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user?.name?.charAt(0)?.toUpperCase()
+                )}
+              </div>
+
             </div>
 
           </div>
         </div>
 
-        {children}
+        {/* CONTENT */}
+        <div className="p-8">
+          {children}
+        </div>
 
       </main>
     </div>
