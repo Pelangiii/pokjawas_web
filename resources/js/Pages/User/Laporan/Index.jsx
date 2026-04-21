@@ -1,9 +1,22 @@
 import React, { useState } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
-import Swal from "sweetalert2"; // 🔥 TAMBAH INI
+import Swal from "sweetalert2";
+
+// 🔥 ICON
+import {
+  Search,
+  Plus,
+  SlidersHorizontal,
+  Pencil,
+  Trash2,
+  Eye
+} from "lucide-react";
 
 export default function Index({ laporans = [] }) {
+
+  const { props } = usePage();
+  const authUser = props.auth?.user;
 
   const [showFilter, setShowFilter] = useState(false);
   const [filter, setFilter] = useState("terbaru");
@@ -11,13 +24,9 @@ export default function Index({ laporans = [] }) {
 
   // 🔥 FILTER + SEARCH + SORT
   const filteredLaporans = [...laporans]
-
-    // SEARCH (judul)
     .filter((item) =>
       item.title?.toLowerCase().includes(search.toLowerCase())
     )
-
-    // FILTER HARI INI
     .filter((item) => {
       if (filter === "hari_ini") {
         const today = new Date().toDateString();
@@ -25,8 +34,6 @@ export default function Index({ laporans = [] }) {
       }
       return true;
     })
-
-    // SORTING
     .sort((a, b) => {
       if (filter === "terlama") {
         return new Date(a.created_at) - new Date(b.created_at);
@@ -37,39 +44,39 @@ export default function Index({ laporans = [] }) {
   return (
     <UserLayout title="Laporan">
 
-      {/* SEARCH + ACTION */}
-      <div className="flex justify-between items-center mb-6">
+      {/* 🔥 SEARCH + ACTION */}
+      <div className="flex justify-between items-center mb-8">
 
         {/* SEARCH */}
-        <div className="relative w-96">
+        <div className="relative w-80">
+          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+
           <input
             type="text"
-            placeholder="Search judul laporan..."
+            placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
-          <span className="absolute left-3 top-2.5 text-gray-400">
-            🔍
-          </span>
         </div>
 
-        <div className="flex gap-2 relative">
+        {/* ACTION */}
+        <div className="flex gap-3 relative">
 
           {/* TAMBAH */}
           <button
             onClick={() => router.get('/user/laporan/create')}
-            className="w-10 h-10 flex items-center justify-center border rounded-xl hover:bg-gray-100 text-lg"
+            className="w-10 h-10 flex items-center justify-center border rounded-xl hover:bg-gray-100 transition"
           >
-            +
+            <Plus size={18} />
           </button>
 
           {/* FILTER */}
           <button
             onClick={() => setShowFilter(!showFilter)}
-            className="w-10 h-10 flex items-center justify-center border rounded-xl hover:bg-gray-100"
+            className="w-10 h-10 flex items-center justify-center border rounded-xl hover:bg-gray-100 transition"
           >
-            ⚙️
+            <SlidersHorizontal size={18} />
           </button>
 
           {/* DROPDOWN */}
@@ -112,7 +119,7 @@ export default function Index({ laporans = [] }) {
         </div>
       </div>
 
-      {/* LIST */}
+      {/* 🔥 LIST */}
       <div className="space-y-4">
 
         {filteredLaporans.length === 0 ? (
@@ -122,69 +129,61 @@ export default function Index({ laporans = [] }) {
         ) : (
           filteredLaporans.map((item) => {
 
-            const user = item.user || {};
-
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm hover:shadow-md transition"
+                className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl shadow-sm hover:shadow-md transition"
               >
 
                 {/* LEFT */}
                 <div className="flex items-center gap-4">
 
-                  {/* AVATAR */}
-                  <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold">
-                    {user.avatar ? (
+                  {/* AVATAR USER LOGIN */}
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold">
+                    {authUser?.avatar ? (
                       <img
-                        src={`/storage/${user.avatar}`}
-                        alt="avatar"
+                        src={`/storage/${authUser.avatar}`}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      user.name?.charAt(0)?.toUpperCase() || "U"
+                      authUser?.name?.charAt(0)?.toUpperCase() || "U"
                     )}
                   </div>
 
-                  {/* NAMA + TITLE */}
+                  {/* TEXT */}
                   <div>
                     <p className="font-semibold text-gray-800 text-lg">
-                      {user.name || "User"}
+                      {authUser?.name || "User"}
                     </p>
 
                     <p className="text-sm text-gray-400">
                       {item.title}
                     </p>
-
-                    {/* STATUS */}
-                    {item.status === "draft" && (
-                      <span className="text-xs text-yellow-500">
-                        Draft
-                      </span>
-                    )}
                   </div>
 
                 </div>
 
-                {/* RIGHT */}
-                <div className="flex items-center gap-5 text-xl">
+                {/* RIGHT ICON */}
+                <div className="flex items-center gap-4">
 
-                  <span
+                  {/* VIEW */}
+                  <button
                     onClick={() => router.get(`/user/laporan/${item.id}`)}
-                    className="cursor-pointer"
+                    className="text-gray-500 hover:text-blue-500 hover:scale-110 transition"
                   >
-                    👁️
-                  </span>
+                    <Eye size={20} />
+                  </button>
 
-                  <span
+                  {/* EDIT */}
+                  <button
                     onClick={() => router.get(`/user/laporan/${item.id}/edit`)}
-                    className="cursor-pointer text-yellow-500 hover:scale-110"
+                    className="text-yellow-500 hover:scale-110 transition"
                   >
-                    ✏️
-                  </span>
+                    <Pencil size={20} />
+                  </button>
 
-                  {/* 🔥 DELETE DENGAN POPUP */}
-                  <span
+                  {/* DELETE */}
+                  <button
                     onClick={() => {
                       Swal.fire({
                         title: "Yakin mau hapus?",
@@ -206,10 +205,10 @@ export default function Index({ laporans = [] }) {
                         }
                       });
                     }}
-                    className="cursor-pointer text-red-500 hover:scale-110"
+                    className="text-red-500 hover:scale-110 transition"
                   >
-                    🗑️
-                  </span>
+                    <Trash2 size={20} />
+                  </button>
 
                 </div>
 
