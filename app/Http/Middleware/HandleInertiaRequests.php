@@ -18,19 +18,19 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
 
+            // 🔥 AUTH USER
             'auth' => [
                 'user' => $request->user(),
             ],
 
-            // 🔥 FLASH MESSAGE GLOBAL
+            // 🔥 FLASH MESSAGE GLOBAL (lebih aman)
             'flash' => [
-                'success' => session('success'),
+                'success' => fn () => $request->session()->get('success'),
             ],
 
-            // 🔥 NOTIF
+            // 🔥 NOTIFICATIONS
             'notifications' => function () {
                 if (!Auth::check()) return [];
 
@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                     ->latest()
                     ->get();
             },
-        ];
+
+        ]);
     }
 }

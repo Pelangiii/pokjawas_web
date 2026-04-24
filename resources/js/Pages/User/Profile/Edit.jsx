@@ -11,6 +11,7 @@ export default function Edit({ user }) {
   const [address, setAddress] = useState(user.address || "");
   const [birthDate, setBirthDate] = useState(user.birth_date || "");
   const [avatar, setAvatar] = useState(null);
+  const [processing, setProcessing] = useState(false);
 
   const [preview, setPreview] = useState(
     user.avatar ? `/storage/${user.avatar}` : null
@@ -27,6 +28,7 @@ export default function Edit({ user }) {
 
   const submit = (e) => {
     e.preventDefault();
+    setProcessing(true);
 
     router.post('/user/profile', {
       name,
@@ -35,21 +37,22 @@ export default function Edit({ user }) {
       address,
       birth_date: birthDate,
       avatar
+    }, {
+      onFinish: () => setProcessing(false)
     });
   };
 
   return (
     <UserLayout title="Edit Profile">
 
-      {/* 🔥 BACKGROUND */}
       <div className="bg-[#F5F7FB] min-h-screen flex justify-center pt-16 px-6">
 
-        {/* 🔥 CARD */}
-        <div className="bg-white w-full max-w-3xl rounded-3xl p-10 shadow-sm">
+        <div className="bg-white w-full max-w-3xl rounded-3xl p-10 shadow-sm 
+        transition duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeIn">
 
           <form onSubmit={submit}>
 
-            {/* 🔥 AVATAR */}
+            {/* AVATAR */}
             <div className="flex flex-col items-center mb-8">
 
               <label className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-300 cursor-pointer group relative">
@@ -57,7 +60,7 @@ export default function Edit({ user }) {
                 {preview ? (
                   <img
                     src={preview}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition duration-300 group-hover:scale-110"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gray-200 text-gray-400">
@@ -66,100 +69,71 @@ export default function Edit({ user }) {
                   </div>
                 )}
 
-                {/* overlay hover */}
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-sm transition">
                   Ganti Foto
                 </div>
 
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleImage}
-                />
+                <input type="file" className="hidden" onChange={handleImage} />
               </label>
 
-              {/* 🔥 NAMA BESAR */}
               <h2 className="text-3xl font-semibold text-gray-800 mt-4">
                 {name || "User"}
               </h2>
-
             </div>
 
-            {/* 🔥 FORM GRID */}
+            {/* FORM */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-              {/* NAMA */}
-              <input
-                type="text"
-                value={name}
-                onChange={(e)=>setName(e.target.value)}
+              <input value={name} onChange={(e)=>setName(e.target.value)}
                 placeholder="Nama"
-                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
-              />
+                className="input" />
 
-              {/* NO HP */}
-              <input
-                type="text"
-                value={phone}
-                onChange={(e)=>setPhone(e.target.value)}
+              <input value={phone} onChange={(e)=>setPhone(e.target.value)}
                 placeholder="No HP"
-                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
-              />
+                className="input" />
 
-              {/* NIP */}
-              <input
-                type="text"
-                value={nip}
-                onChange={(e)=>setNip(e.target.value)}
+              <input value={nip} onChange={(e)=>setNip(e.target.value)}
                 placeholder="NIP"
-                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
-              />
+                className="input" />
 
-              {/* TANGGAL LAHIR */}
-              <input
-                type="date"
-                value={birthDate}
+              <input type="date" value={birthDate}
                 onChange={(e)=>setBirthDate(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
-              />
+                className="input" />
 
-              {/* ALAMAT (FULL WIDTH) */}
-              <textarea
-                value={address}
+              <textarea value={address}
                 onChange={(e)=>setAddress(e.target.value)}
                 placeholder="Alamat"
-                className="md:col-span-2 border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none resize-none"
-              />
+                className="input md:col-span-2" />
 
             </div>
 
-            {/* 🔥 BUTTON */}
+            {/* BUTTON */}
             <div className="flex justify-between mt-10">
 
-              {/* KEMBALI */}
               <button
                 type="button"
                 onClick={() => window.history.back()}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-8 py-3 rounded-full font-semibold transition"
+                className="bg-gray-300 hover:bg-gray-400 px-8 py-3 rounded-full transition active:scale-95"
               >
                 Kembali
               </button>
 
-              {/* SIMPAN */}
               <button
                 type="submit"
-                className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-full font-semibold transition"
+                disabled={processing}
+                className={`px-8 py-3 rounded-full text-white font-semibold transition
+                ${processing 
+                  ? "bg-green-400 cursor-not-allowed" 
+                  : "bg-green-700 hover:bg-green-800 active:scale-95"}`}
               >
-                Simpan
+                {processing ? "Menyimpan..." : "Simpan"}
               </button>
 
             </div>
 
           </form>
-
         </div>
       </div>
-
     </UserLayout>
   );
 }

@@ -54,6 +54,6 @@ class ProfileController extends Controller
         ]);
 
         // 🔥 KIRIM FLASH MESSAGE
-        return redirect('/user/profile')->with('success', 'Profile berhasil diupdate!');
+        return redirect('/user/dashboard')->with('success', 'Profile berhasil diupdate!');
     }
 }

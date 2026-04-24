@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { router, usePage } from "@inertiajs/react";
-import { LayoutDashboard, FileText, Mail, Bell, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  Mail,
+  Bell,
+  LogOut
+} from "lucide-react";
 
 export default function UserLayout({ children, title }) {
 
@@ -16,7 +22,9 @@ export default function UserLayout({ children, title }) {
   const [showPopup, setShowPopup] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
 
-  // 🔥 POPUP SUCCESS
+  const notifRef = useRef();
+
+  // 🔥 POPUP SUCCESS (LEBIH HALUS)
   useEffect(() => {
     if (flash.success) {
       setShowPopup(true);
@@ -24,28 +32,40 @@ export default function UserLayout({ children, title }) {
     }
   }, [flash.success]);
 
+  // 🔥 CLOSE NOTIF KALAU KLIK LUAR
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotif(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const menuClass = (path) =>
     `flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition font-medium
     ${
       currentPath.startsWith(path)
-        ? "bg-green-100 text-green-700"
+        ? "bg-green-100 text-green-700 shadow-sm"
         : "text-gray-500 hover:bg-gray-100"
     }`;
 
   return (
     <div className="flex min-h-screen bg-[#F4F6FA]">
 
-      {/* 🔥 POPUP SUCCESS */}
+      {/* ================= POPUP SUCCESS ================= */}
       {showPopup && (
-        <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-[999] animate-bounce">
+        <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-[999] animate-[fadeIn_0.3s_ease]">
           {flash.success}
         </div>
       )}
 
-      {/* 🔥 LOGOUT MODAL */}
+      {/* ================= LOGOUT MODAL ================= */}
       {showLogout && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
-          <div className="bg-white rounded-2xl p-6 w-80 shadow-xl">
+
+          <div className="bg-white rounded-2xl p-6 w-80 shadow-xl animate-[fadeIn_0.2s_ease]">
 
             <h2 className="text-lg font-semibold mb-2">
               Konfirmasi Logout
@@ -58,14 +78,14 @@ export default function UserLayout({ children, title }) {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowLogout(false)}
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
               >
                 Batal
               </button>
 
               <button
                 onClick={() => router.post('/logout')}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white"
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
               >
                 Logout
               </button>
@@ -82,7 +102,7 @@ export default function UserLayout({ children, title }) {
           {/* LOGO */}
           <div className="flex items-center gap-3 mb-10">
             <img
-              src="/logo.png" // ganti kalau ada logo asli
+              src="/logo.png"
               className="w-10 h-10 object-contain"
             />
             <div>
@@ -122,7 +142,7 @@ export default function UserLayout({ children, title }) {
         {/* LOGOUT */}
         <button
           onClick={() => setShowLogout(true)}
-          className="flex items-center gap-2 text-gray-500 hover:text-red-500"
+          className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition"
         >
           <LogOut size={18} />
           Logout
@@ -143,14 +163,14 @@ export default function UserLayout({ children, title }) {
 
           <div className="flex items-center gap-6">
 
-            {/* ICON */}
-            <Mail className="text-gray-500" size={20} />
+            {/* MAIL */}
+            <Mail className="text-gray-500 cursor-pointer hover:text-gray-700 transition" size={20} />
 
             {/* 🔔 NOTIFICATION */}
-            <div className="relative">
+            <div className="relative" ref={notifRef}>
               <Bell
                 size={20}
-                className="cursor-pointer text-gray-500"
+                className="cursor-pointer text-gray-500 hover:text-gray-700 transition"
                 onClick={() => setShowNotif(!showNotif)}
               />
 
@@ -162,7 +182,7 @@ export default function UserLayout({ children, title }) {
 
               {/* DROPDOWN */}
               {showNotif && (
-                <div className="absolute right-0 mt-3 w-72 bg-white shadow-lg rounded-xl border z-50">
+                <div className="absolute right-0 mt-3 w-72 bg-white shadow-lg rounded-xl border z-50 animate-[fadeIn_0.2s_ease]">
 
                   {notifications.length === 0 ? (
                     <p className="p-4 text-gray-400 text-sm">
@@ -175,7 +195,7 @@ export default function UserLayout({ children, title }) {
                         onClick={() =>
                           router.get(`/user/laporan/${item.id}/edit`)
                         }
-                        className="p-3 border-b hover:bg-gray-100 cursor-pointer"
+                        className="p-3 border-b hover:bg-gray-100 cursor-pointer transition"
                       >
                         <p className="text-sm font-semibold text-red-500">
                           Laporan Direvisi
@@ -197,7 +217,7 @@ export default function UserLayout({ children, title }) {
             {/* PROFILE */}
             <div
               onClick={() => router.get('/user/profile')}
-              className="flex items-center gap-3 cursor-pointer"
+              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition"
             >
 
               <div className="text-right">
@@ -225,7 +245,7 @@ export default function UserLayout({ children, title }) {
           </div>
         </div>
 
-        {/* CONTENT */}
+        {/* ================= CONTENT ================= */}
         <div className="p-8">
           {children}
         </div>
