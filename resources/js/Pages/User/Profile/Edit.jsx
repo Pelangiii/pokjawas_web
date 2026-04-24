@@ -45,15 +45,16 @@ export default function Edit({ user }) {
   return (
     <UserLayout title="Edit Profile">
 
+      {/* 🔥 BACKGROUND */}
       <div className="bg-[#F5F7FB] min-h-screen flex justify-center pt-16 px-6">
 
-        <div className="bg-white w-full max-w-3xl rounded-3xl p-10 shadow-sm 
-        transition duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeIn">
+        {/* 🔥 CARD */}
+        <div className="bg-white w-full max-w-3xl rounded-3xl p-10 shadow-sm animate-fadeIn">
 
           <form onSubmit={submit}>
 
-            {/* AVATAR */}
-            <div className="flex flex-col items-center mb-8">
+            {/* 🔥 AVATAR */}
+            <div className="flex flex-col items-center mb-10">
 
               <label className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-300 cursor-pointer group relative">
 
@@ -69,6 +70,7 @@ export default function Edit({ user }) {
                   </div>
                 )}
 
+                {/* overlay */}
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-sm transition">
                   Ganti Foto
                 </div>
@@ -76,44 +78,62 @@ export default function Edit({ user }) {
                 <input type="file" className="hidden" onChange={handleImage} />
               </label>
 
-              <h2 className="text-3xl font-semibold text-gray-800 mt-4">
+              <h2 className="text-2xl font-semibold text-gray-800 mt-4">
                 {name || "User"}
               </h2>
+
+              <p className="text-sm text-gray-400">
+                Edit informasi profil kamu
+              </p>
             </div>
 
-            {/* FORM */}
+            {/* 🔥 FORM (MATCH INDEX STYLE) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-              <input value={name} onChange={(e)=>setName(e.target.value)}
+              <input
+                value={name}
+                onChange={(e)=>setName(e.target.value)}
                 placeholder="Nama"
-                className="input" />
+                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none transition"
+              />
 
-              <input value={phone} onChange={(e)=>setPhone(e.target.value)}
+              <input
+                value={phone}
+                onChange={(e)=>setPhone(e.target.value)}
                 placeholder="No HP"
-                className="input" />
+                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none transition"
+              />
 
-              <input value={nip} onChange={(e)=>setNip(e.target.value)}
+              <input
+                value={nip}
+                onChange={(e)=>setNip(e.target.value)}
                 placeholder="NIP"
-                className="input" />
+                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none transition"
+              />
 
-              <input type="date" value={birthDate}
+              <input
+                type="date"
+                value={birthDate}
                 onChange={(e)=>setBirthDate(e.target.value)}
-                className="input" />
+                className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none transition"
+              />
 
-              <textarea value={address}
+              <textarea
+                value={address}
                 onChange={(e)=>setAddress(e.target.value)}
                 placeholder="Alamat"
-                className="input md:col-span-2" />
+                className="md:col-span-2 border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none resize-none transition"
+              />
 
             </div>
 
-            {/* BUTTON */}
+            {/* 🔥 BUTTON */}
             <div className="flex justify-between mt-10">
 
               <button
                 type="button"
                 onClick={() => window.history.back()}
-                className="bg-gray-300 hover:bg-gray-400 px-8 py-3 rounded-full transition active:scale-95"
+                className="px-8 py-3 rounded-full border border-gray-300 hover:bg-gray-100 transition"
               >
                 Kembali
               </button>
@@ -126,12 +146,13 @@ export default function Edit({ user }) {
                   ? "bg-green-400 cursor-not-allowed" 
                   : "bg-green-700 hover:bg-green-800 active:scale-95"}`}
               >
-                {processing ? "Menyimpan..." : "Simpan"}
+                {processing ? "Menyimpan..." : "Simpan Perubahan"}
               </button>
 
             </div>
 
           </form>
+
         </div>
       </div>
     </UserLayout>
