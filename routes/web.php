@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -49,37 +49,20 @@ Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.
 // Proses nyimpen datanya
 Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
 
+// ngeupdate data
+Route::put('/berita/{id}', [BeritaController::class, 'update']);
+
 // Proses hapus
 Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
-// / ============ ROUTE BERITA ============.                                                  Z  
-// // Halaman manajemen berita (pake controller)
-// Route::get('/manajemen', [BeritaController::class, 'index'])
-//     ->middleware(['auth'])
-//     ->name('manajemen');
+Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
 
-// // Halaman create berita (kalo lo pake halaman terpisah)
-// Route::get('/berita/create', function () {
-//     return Inertia::render('Berita/Create');
-// })->middleware(['auth'])->name('berita.create');
+// URL: /verifikasilaporan (Kecil semua, tanpa strip)
+Route::get('/verifikasilaporan', [LaporanController::class, 'index'])->name('verifikasi.index');
 
-// // Proses simpan berita
-// Route::post('/berita', [BeritaController::class, 'store'])
-//     ->middleware(['auth']);
+Route::patch('/verifikasilaporan/{id}/status', [LaporanController::class, 'updateStatus'])->name('verifikasi.update');
 
-// // Hapus berita
-// Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])
-//     ->middleware(['auth']);
+Route::get('/verifikasilaporan/{id}', [LaporanController::class, 'show'])->name('verifikasi.show');
 
-// // Edit berita (nanti kalo butuh)
-// Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])
-//     ->middleware(['auth'])
-//     ->name('berita.edit');
-
-// // Update berita
-// Route::put('/berita/{id}', [BeritaController::class, 'update'])
-//     ->middleware(['auth']);
-
-// Route::post('/berita', [BeritaController::class, 'store']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

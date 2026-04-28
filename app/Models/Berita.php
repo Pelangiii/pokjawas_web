@@ -9,7 +9,6 @@ class Berita extends Model
 {
     use HasFactory;
 
-    // INI WAJIB ADA karena nama tabel lu 'berita' bukan 'beritas'
     protected $table = 'berita';
 
     protected $fillable = [
@@ -18,4 +17,5 @@ class Berita extends Model
         'kategori',
         'gambar',
     ];
+    
 }
