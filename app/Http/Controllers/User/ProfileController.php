@@ -38,11 +38,13 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|max:2048'
         ]);
 
+        // upload avatar
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('profile', 'public');
             $user->avatar = $path;
         }
 
+        // update data
         $user->update([
             'name' => $request->name,
             'phone' => $request->phone,
@@ -51,8 +53,7 @@ class ProfileController extends Controller
             'birth_date' => $request->birth_date
         ]);
 
-        // 🔥 REDIRECT + FLASH
-        return redirect('/user/profile')
-            ->with('success', 'Profile berhasil diupdate!');
+        // 🔥 KIRIM FLASH MESSAGE
+        return redirect('/user/dashboard')->with('success', 'Profile berhasil diupdate!');
     }
 }

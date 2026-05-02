@@ -4,36 +4,43 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Laporan;
+use Illuminate\Support\Facades\Auth;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
+
+            // 🔥 AUTH USER
             'auth' => [
                 'user' => $request->user(),
             ],
-        ];
+
+            // 🔥 FLASH MESSAGE GLOBAL (lebih aman)
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+            ],
+
+            // 🔥 NOTIFICATIONS
+            'notifications' => function () {
+                if (!Auth::check()) return [];
+
+                return Laporan::where('user_id', Auth::id())
+                    ->where('status', 'revisi')
+                    ->whereNotNull('feedback')
+                    ->latest()
+                    ->get();
+            },
+
+        ]);
     }
 }

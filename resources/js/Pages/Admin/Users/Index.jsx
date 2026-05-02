@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { router, useForm } from '@inertiajs/react';
-import { router } from "@inertiajs/react";
+
 
 export default function ManagementUser({ users, filters }) {
     const [view, setView] = useState('list'); // list, detail, add, edit
