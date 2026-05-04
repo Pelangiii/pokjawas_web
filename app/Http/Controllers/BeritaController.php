@@ -35,7 +35,7 @@ class BeritaController extends Controller
         ];
     });
 
-    return Inertia::render('Manajemen', [
+    return Inertia::render('Berita', [
         'berita' => $berita
     ]);
 }
@@ -69,7 +69,7 @@ class BeritaController extends Controller
             'gambar'   => $gambarPath,
         ]);
 
-       return redirect()->route('manajemen.index');
+       return redirect()->route('berita.index');
     }
 
     public function destroy($id)

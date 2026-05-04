@@ -48,7 +48,7 @@ export default function TambahBerita() {
             
             <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-xl w-full max-w-xl">
                 
-                <Link href="/manajemen" className="text-gray-400 text-sm mb-4 block">
+                <Link href="/berita" className="text-gray-400 text-sm mb-4 block">
                     ← Kembali
                 </Link>
 

@@ -30,7 +30,7 @@ export default function EditBerita({ berita }) {
                 showConfirmButton: false
             });
 
-            router.visit('/manajemen'); // balik ke list
+            router.visit('/berita'); 
         },
 
         onError: () => {
