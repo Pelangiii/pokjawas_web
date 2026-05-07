@@ -31,15 +31,27 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        // Regenerate session untuk keamanan dan membersihkan data session lama
+        // Regenerate session untuk keamanan
         $request->session()->regenerate();
 
-        // Redirect ke 'manajemen' jika ada, jika tidak ke dashboard default
-        if (Route::has('manajemen')) {
-            return redirect()->intended(route('manajemen'));
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // 🔥 SET ROLE BERDASARKAN DOMAIN EMAIL
+        if (str_ends_with($user->email, '@pokjawas.com')) {
+            $user->role = 'admin';
+        } else {
+            $user->role = 'pegawai';
         }
-        
-        return redirect()->intended(route('dashboard', absolute: false));
+
+        $user->save();
+
+        // 🔥 REDIRECT BERDASARKAN ROLE
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('user.dashboard');
     }
 
     /**
@@ -49,10 +61,10 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        // Menghapus semua data session agar tidak ada data user sebelumnya yang nyangkut
+        // Menghapus semua data session
         $request->session()->invalidate();
 
-        // Membuat CSRF token baru demi keamanan
+        // Membuat CSRF token baru
         $request->session()->regenerateToken();
 
         return redirect('/');

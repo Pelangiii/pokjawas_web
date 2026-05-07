@@ -28,7 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    // BERITA (Sudah dirapikan dari duplikat)
+    // BERITA
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
     Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
@@ -44,15 +44,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // USER MANAGEMENT
     Route::resource('/users', UserController::class);
 
-    // PROFILE (Default Breeze/Jetstream style)
+    // PROFILE
     Route::get('/profile', [UserProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [UserProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [UserProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-}); // <--- TADI KAMU KURANG INI DI BARIS 24-an
+/* ================= ADMIN AREA (🔐 PROTECTED) ================= */
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-/* ================= ADMIN AREA ================= */
-Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('AdminDashboard');
     })->name('admin.dashboard');
@@ -65,7 +65,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 /* ================= USER AREA ================= */
 Route::middleware(['auth'])->prefix('user')->group(function () {
 
-    // ✅ DASHBOARD USER
+    // DASHBOARD USER
     Route::get('/dashboard', function () {
         $laporans = Laporan::where('user_id', Auth::id())
             ->latest()
@@ -77,7 +77,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         ]);
     })->name('user.dashboard');
 
-    // ✅ LAPORAN
+    // LAPORAN
     Route::get('/laporan', [UserLaporanController::class, 'index'])->name('user.laporan');
     Route::get('/laporan/create', [UserLaporanController::class, 'create']);
     Route::post('/laporan', [UserLaporanController::class, 'store']);
@@ -86,7 +86,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::put('/laporan/{id}', [UserLaporanController::class, 'update']);
     Route::delete('/laporan/{id}', [UserLaporanController::class, 'destroy']);
 
-    // ✅ PROFILE USER
+    // PROFILE USER
     Route::get('/profile', [UserProfileController::class, 'index'])->name('user.profile');
     Route::get('/profile/edit', [UserProfileController::class, 'edit']);
     Route::post('/profile', [UserProfileController::class, 'update']);
