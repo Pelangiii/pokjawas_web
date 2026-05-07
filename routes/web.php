@@ -3,7 +3,7 @@
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\User\LaporanController;
-use App\Http\Controllers\User\ProfileController as UserProfileController; // 🔥 FIX
+use App\Http\Controllers\User\ProfileController as UserProfileController;
 use App\Models\Laporan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +43,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('AdminDashboard');
     })->name('admin.dashboard');
-
+    
     Route::get('/users-list', function () {
         return Inertia::render('Admin/Users/Index');
     })->name('admin.users');

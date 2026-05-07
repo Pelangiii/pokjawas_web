@@ -1,91 +1,103 @@
-import { Head, Link, router } from '@inertiajs/react'; // Tambah Link buat navigasi antar file
+import React from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import Sidebar from '@/Components/Sidebar';
+import { Search, Plus, Edit3, Trash2, Newspaper } from "lucide-react";
 
-export default function Manajemen({ berita = [] }) {
-    
-    // Fungsi hapus berita
+export default function ManajemenBerita({ berita = [] }) {
+    const { props, url } = usePage();
+    const userAuth = props.auth?.user;
+
     const handleDelete = (id) => {
         if (confirm('Yakin mau hapus berita ini?')) {
-            router.delete(`/berita/${id}`);
+            router.delete(`/berita/${id}`); // Sesuaikan dengan route di web.php kamu
         }
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-100 font-sans">
+        <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-gray-900">
             <Head title="Manajemen Berita" />
-            <Sidebar />
+            
+            {/* Sidebar Modular kita */}
+            <Sidebar url={url} />
 
-            <main className="flex-1 p-6">
-                {/* --- HEADER --- */}
-                <div className="flex justify-between items-center mb-10">
-                    <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Manajemen Berita</h1>
-                    <div className="flex items-center gap-4">
-                        <div className="text-right">
-                            <p className="text-sm font-bold text-gray-800 leading-none">Leon Scott</p>
-                            <p className="text-[10px] text-gray-400 font-bold">ADMIN</p>
+            <main className="flex-1 ml-64">
+                {/* --- NAVBAR --- */}
+                <div className="flex justify-between items-center px-8 py-6 bg-white border-b sticky top-0 z-40 shadow-sm">
+                    <h1 className="text-3xl font-black text-gray-800 tracking-tight">Manajemen Berita</h1>
+                    <div className="flex items-center gap-6 text-right">
+                        <div>
+                            <p className="text-sm font-bold">{userAuth?.name || "Admin"}</p>
+                            <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest leading-none">Administrator</p>
                         </div>
-                        <div className="w-10 h-10 bg-gray-300 rounded-xl flex items-center justify-center font-bold text-gray-600">LS</div>
+                        <div className="w-10 h-10 rounded-xl bg-green-700 text-white flex items-center justify-center font-bold">
+                            {userAuth?.name?.charAt(0) || "A"}
+                        </div>
                     </div>
                 </div>
 
-                {/* --- SEARCH + TOMBOL TAMBAH --- */}
-                <div className="flex justify-between mb-8 items-center">
-                    <div className="relative w-1/3">
-                        <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
-                        <input type="text" placeholder="Search" className="border-none shadow-sm pl-10 pr-4 py-2 rounded-xl w-full focus:ring-2 focus:ring-emerald-500" />
-                    </div>
-                    
-                    <div className="flex gap-2">
-                        {/* INI KUNCINYA: Pakai Link buat pindah ke file TambahBerita.jsx */}
+                <div className="p-8">
+                    {/* --- SEARCH & ACTION --- */}
+                    <div className="flex justify-between items-center mb-8">
+                        <div className="relative w-80">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <input 
+                                type="text" 
+                                placeholder="Cari judul berita..." 
+                                className="w-full bg-white border-none rounded-2xl pl-12 py-3 font-bold shadow-sm focus:ring-2 focus:ring-green-800" 
+                            />
+                        </div>
                         <Link 
-                            href="/berita/tambah" 
-                            className="bg-white border border-gray-200 text-gray-600 p-2 rounded-lg hover:bg-gray-50 transition"
+                            href="/admin/berita/tambah" 
+                            className="bg-green-800 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-green-900 transition"
                         >
-                            ➕
+                            <Plus size={18} /> Tambah Berita
                         </Link>
                     </div>
-                </div>
 
-                {/* --- GRID BERITA (Daftar Card) --- */}
-                {berita.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                        <p className="text-gray-400">Belum ada berita. Klik "+" untuk menambah.</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {berita.map((item, index) => (
-                            <div key={item.id} className="bg-white p-4 rounded-[2rem] shadow-sm flex gap-4 border border-gray-50 hover:shadow-md transition relative group">
-                                
-                                {/* Kotak Gambar (Kiri) */}
-                                <div className="w-24 h-24 bg-gray-100 rounded-2xl flex-shrink-0 overflow-hidden border border-gray-200">
-                                    {item.gambar ? (
-                                        <img src={`/storage/${item.gambar}`} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full bg-gray-200 opacity-20"></div>
-                                    )}
-                                </div>
-                                
-                                {/* Info Teks (Kanan) */}
-                                <div className="flex flex-col justify-between flex-1 min-w-0">
-                                    <div>
-                                        <div className="flex justify-between items-start gap-1">
-                                            <h3 className="font-bold text-[15px] text-gray-800 line-clamp-1">{item.judul}</h3>
-                                            <span className="text-[10px] text-gray-400 whitespace-nowrap">{item.created_at}</span>
+                    {/* --- GRID BERITA --- */}
+                    {berita.length === 0 ? (
+                        <div className="text-center py-24 bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100">
+                            <Newspaper className="mx-auto text-gray-200 mb-4" size={64} />
+                            <p className="text-gray-400 font-bold">Belum ada berita yang diterbitkan.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {berita.map((item) => (
+                                <div key={item.id} className="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-50 hover:shadow-xl transition-all duration-300 group">
+                                    <div className="relative h-48 mb-4 overflow-hidden rounded-[1.5rem]">
+                                        <img 
+                                            src={item.gambar ? `/storage/${item.gambar}` : 'https://placehold.co/600x400?text=No+Image'} 
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                            alt={item.judul}
+                                        />
+                                        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full">
+                                            <p className="text-[10px] font-black text-green-700 uppercase tracking-widest">{item.kategori}</p>
                                         </div>
-                                        <p className="text-emerald-500 text-[11px] font-bold uppercase tracking-wider">{item.kategori}</p>
-                                        <p className="text-gray-400 text-[11px] line-clamp-2 mt-1">{item.isi}</p>
                                     </div>
 
-                                    {/* Action Buttons */}
-                                    <div className="flex justify-end gap-2 mt-2">
-                                        <button className="text-amber-400 text-sm">✏️</button>
-                                        <button onClick={() => handleDelete(item.id)} className="text-red-400 text-sm">🗑️</button>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-start">
+                                            <h3 className="font-bold text-gray-800 line-clamp-2 leading-tight h-10">{item.judul}</h3>
+                                        </div>
+                                        <p className="text-gray-400 text-xs line-clamp-2">{item.isi}</p>
+                                        
+                                        <div className="pt-4 flex justify-between items-center border-t border-gray-50">
+                                            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-tighter">{item.created_at}</span>
+                                            <div className="flex gap-1">
+                                                <Link href={`/admin/berita/${item.id}/edit`} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition">
+                                                    <Edit3 size={18} />
+                                                </Link>
+                                                <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+                </div>
             </main>
         </div>
     );

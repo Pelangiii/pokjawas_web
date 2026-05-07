@@ -36,7 +36,7 @@ class UserController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        return Inertia::render('ManagementUser', [
+        return Inertia::render('Admin/ManagementUser', [
             // Kita pakai get() untuk mengambil datanya
             'users' => $query->get(),
             'filters' => $request->only(['search', 'filter'])
