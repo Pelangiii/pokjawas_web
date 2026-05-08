@@ -9,14 +9,19 @@ use Inertia\Inertia;
 class UserController extends Controller
 {
     public function index(Request $request)
-    {
-        $users = User::latest()->get();
+{
+    $query = User::latest();
 
-        return Inertia::render('ManagementUser', [
-            'users' => $users,
-            'filters' => []
-        ]);
+    if ($request->has('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%')
+              ->orWhere('email', 'like', '%' . $request->search . '%');
     }
+
+    return Inertia::render('Admin/ManagementUser', [
+        'users' => $query->get(),
+        'filters' => $request->only(['search', 'filter'])
+    ]);
+}
 
     public function store(Request $request)
     {

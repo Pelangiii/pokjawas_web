@@ -64,10 +64,10 @@ export default function AdminDashboard() {
             <div onClick={() => router.get('/admin/dashboard')} className={menuClass('/admin/dashboard')}>
               <LayoutDashboard size={18} /> Dashboard
             </div>
-            <div onClick={() => router.get('/admin/users')} className={menuClass('/admin/users')}>
+            <div onClick={() => router.get('/users')} className={menuClass('/users')}>
               <Users size={18} /> Manajemen User
             </div>
-            <div onClick={() => router.get('/admin/berita')} className={menuClass('/admin/berita')}>
+            <div onClick={() => router.get('/admin/berita')} className={menuClass('/manajemen')}>
               <Newspaper size={18} /> Manajemen Berita
             </div>
             <div onClick={() => router.get('/admin/verifikasi')} className={menuClass('/admin/verifikasi')}>
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
 
         {/* NAVBAR */}
         <div className="flex justify-between items-center px-8 py-6 bg-white border-b sticky top-0 z-40 shadow-sm">
-          <h1 className="text-3xl font-black text-gray-800 tracking-tight">Admin Dashboard</h1>
+          <h1 className="text-3xl font-black text-gray-800 tracking-tight">Dashboard</h1>
 
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-4">
