@@ -9,21 +9,34 @@ use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
-    public function index(Request $request) // Tambahin Request $request di sini
+    
+    public function index(Request $request)
 {
     $query = Berita::query();
 
-    // 1. Logika Filter Berdasarkan Request
-    if ($request->filter == 'hari-ini') {
-        $query->whereDate('created_at', today());
-    } elseif ($request->filter == 'terlama') {
-        $query->orderBy('created_at', 'asc');
-    } else {
-        // Default: Terbaru (latest)
-        $query->orderBy('created_at', 'desc');
+    // ✅ SEARCH (TAMBAHIN DI SINI)
+    if ($request->filled('search')) {
+        $query->where('judul', 'like', '%' . $request->search . '%');
     }
 
-    // 2. Eksekusi query dan mapping datanya
+    // ✅ FILTER (punya lu tetap)
+ // FILTER
+switch ($request->filter) {
+    case 'hari-ini':
+        $query->whereDate('created_at', today());
+        break;
+
+    case 'terlama':
+        $query->orderBy('created_at', 'asc');
+        break;
+
+    case 'semua':
+    default:
+        $query->orderBy('created_at', 'desc');
+        break;
+}
+
+    // ✅ GET DATA
     $berita = $query->get()->map(function ($item) {
         return [
             'id' => $item->id,

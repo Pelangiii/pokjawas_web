@@ -1,136 +1,303 @@
 import { useState } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import Sidebar from '@/Components/Sidebar';
-import { BellDot, Check, Eye, Mail, X, Filter, Search } from 'lucide-react';
+import {
+    BellDot,
+    Check,
+    Eye,
+    Mail,
+    X,
+    Filter,
+    Search,
+} from 'lucide-react';
 
-export default function VerifikasiLaporan({ laporanData }) {
+export default function VerifikasiLaporan({ laporanData = [] }) {
     const { auth } = usePage().props;
     const user = auth.user;
 
-    // --- STATE LOGIC ---
     const [showFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Fungsi Search (Trigger pas tekan Enter)
     const handleSearch = (e) => {
         if (e.key === 'Enter') {
-            router.get(route('verifikasi.index'), 
-                { search: searchTerm }, 
-                { preserveState: true, replace: true }
+            router.get(
+                route('verifikasi.index'),
+                { search: searchTerm },
+                {
+                    preserveState: true,
+                    replace: true,
+                }
             );
         }
     };
 
     const applyFilter = (status) => {
-        router.get(route('verifikasi.index'), { status: status }, { 
-            preserveState: true, 
-            replace: true 
-        });
+        router.get(
+            route('verifikasi.index'),
+            { status: status },
+            {
+                preserveState: true,
+                replace: true,
+            }
+        );
+
         setShowFilter(false);
     };
 
     const handleUpdate = (id, status) => {
         router.patch(route('verifikasi.update', id), {
-            status: status
+            status: status,
         });
     };
 
     return (
-        <div className="flex min-h-screen bg-[#F8F9FA] font-sans">
+        <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-slate-900">
             <Head title="Verifikasi Laporan" />
+
+            {/* SIDEBAR */}
             <Sidebar />
 
-            <main className="flex-1 p-8">
+            {/* MAIN */}
+            <main className="flex-1 lg:ml-64">
                 
                 {/* HEADER */}
-                <div className="flex justify-between items-center mb-10">
-                    <h1 className="text-3xl font-black text-gray-800 tracking-tight">
-                        Verifikasi Laporan
-                    </h1>
-
-                    <div className="flex items-center gap-4">
-                        <div className="flex gap-4 text-gray-400">
-                            <Mail size={18} className="cursor-pointer hover:text-emerald-500 transition" />
-                            <BellDot size={18} className="cursor-pointer hover:text-emerald-500 transition" />
+                <header className="sticky top-0 z-30 bg-white border-b border-slate-100 shadow-sm">
+                    <div className="flex justify-between items-center px-4 lg:px-8 py-5">
+                        
+                        {/* TITLE */}
+                        <div>
+                            <h1 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">
+                                Verifikasi Laporan
+                            </h1>
                         </div>
-                        <div className="text-right">
-                            <p className="text-sm font-bold text-gray-800 leading-none">{user?.name || 'User'}</p>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">{user?.role || 'Admin'}</p>
-                        </div>
-                        <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center font-bold text-gray-600 uppercase">
-                            {user?.name?.charAt(0)}
-                        </div>
-                    </div>
-                </div>
 
-                {/* SEARCH & FILTER BAR (Sesuai Screenshot) */}
-                <div className="flex justify-between items-center mb-8">
-                    {/* Input Search */}
-                    <div className="relative w-1/3">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <input 
-                            type="text" 
-                            placeholder="Search" 
-                            className="border-none shadow-sm pl-10 pr-4 py-2 rounded-xl w-full focus:ring-2 focus:ring-emerald-500" 
-                        />
-                    </div>
-                    {/* Button Filter Status */}
-                    <div className="relative">
-                        <button 
-                            onClick={() => setShowFilter(!showFilter)}
-                            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-400 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
-                        >
-                            <Filter size={16} />
-                            Filter Status
-                        </button>
+                        {/* RIGHT */}
+                        <div className="flex items-center gap-6">
+                            
+                            {/* ICON */}
+                            <div className="flex items-center gap-4 text-slate-400">
+                                <Mail
+                                    size={20}
+                                    className="cursor-pointer hover:text-emerald-600 transition"
+                                />
 
-                        {showFilter && (
-                            <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
-                                <button onClick={() => applyFilter('all')} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50">Semua Laporan</button>
-                                <button onClick={() => applyFilter('pending')} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-amber-600">Pending</button>
-                                <button onClick={() => applyFilter('diterima')} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-emerald-600">Diterima</button>
-                                <button onClick={() => applyFilter('revisi')} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-red-600">Revisi</button>
+                                <div className="relative">
+                                    <BellDot
+                                        size={20}
+                                        className="cursor-pointer hover:text-emerald-600 transition"
+                                    />
+
+                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                                </div>
                             </div>
-                        )}
-                    </div>
-                </div>
 
-                {/* LIST LAPORAN */}
-                <div className="space-y-4">
-                    {laporanData.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200">
-                            <p className="text-gray-400">Data laporan tidak ditemukan.</p>
+                            {/* DIVIDER */}
+                            <div className="h-6 w-px bg-slate-200"></div>
+
+                            {/* PROFILE */}
+                            <div className="flex items-center gap-3 cursor-pointer group">
+                                <div className="text-right hidden sm:block">
+                                    <p className="text-sm font-bold text-slate-800">
+                                        {user?.name || 'Admin'}
+                                    </p>
+
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                        Administrator
+                                    </p>
+                                </div>
+
+                                <div className="w-10 h-10 bg-emerald-700 text-white rounded-xl flex items-center justify-center font-bold shadow-sm shadow-emerald-200 uppercase">
+                                    {user?.name?.charAt(0)}
+                                </div>
+                            </div>
                         </div>
-                    ) : (
-                        laporanData.map((laporan) => (
-                            <div 
-                                key={laporan.id} 
-                                className="bg-white p-5 rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between border border-gray-50 hover:border-gray-200 transition"
+                    </div>
+                </header>
+
+                {/* CONTENT */}
+                <div className="p-4 lg:p-8">
+
+                    {/* SEARCH & FILTER */}
+                    <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-8">
+
+                        {/* SEARCH */}
+                        <div className="relative flex-1 max-w-md">
+                            <Search
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                size={18}
+                            />
+
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={handleSearch}
+                                placeholder="Cari nama pelapor..."
+                                className="bg-white border border-slate-100 shadow-sm pl-11 pr-4 py-3 rounded-2xl w-full focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm outline-none"
+                            />
+                        </div>
+
+                        {/* FILTER */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowFilter(!showFilter)}
+                                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold transition-all border
+                                ${
+                                    showFilter
+                                        ? 'bg-slate-800 border-slate-800 text-white'
+                                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm'
+                                }`}
                             >
-                                <div className="flex items-center gap-5">
-                                    <div className="w-14 h-14 bg-gray-200 rounded-2xl overflow-hidden">
-                                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde" className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-[1.5px] h-10 bg-gray-200"></div>
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 text-sm">{laporan.nama}</h3>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase">({laporan.tanggal})</span>
+                                <Filter size={18} />
+                                Filter Status
+                            </button>
+
+                            {showFilter && (
+                                <div className="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
+                                    <button
+                                        onClick={() => applyFilter('all')}
+                                        className="w-full text-left px-5 py-2.5 text-sm hover:bg-slate-50 font-medium transition"
+                                    >
+                                        Semua Laporan
+                                    </button>
+
+                                    <button
+                                        onClick={() => applyFilter('pending')}
+                                        className="w-full text-left px-5 py-2.5 text-sm hover:bg-amber-50 text-amber-600 font-medium transition"
+                                    >
+                                        Pending
+                                    </button>
+
+                                    <button
+                                        onClick={() => applyFilter('diterima')}
+                                        className="w-full text-left px-5 py-2.5 text-sm hover:bg-emerald-50 text-emerald-600 font-medium transition"
+                                    >
+                                        Diterima
+                                    </button>
+
+                                    <button
+                                        onClick={() => applyFilter('revisi')}
+                                        className="w-full text-left px-5 py-2.5 text-sm hover:bg-red-50 text-red-600 font-medium transition"
+                                    >
+                                        Revisi
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* LIST */}
+                    <div className="grid grid-cols-1 gap-4">
+                        {laporanData.length === 0 ? (
+                            <div className="text-center py-20 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+                                <Search
+                                    className="mx-auto text-slate-300 mb-4"
+                                    size={48}
+                                />
+
+                                <p className="text-slate-500 font-bold">
+                                    Data laporan tidak ditemukan.
+                                </p>
+
+                                <p className="text-slate-400 text-xs mt-1">
+                                    Coba sesuaikan pencarian atau filter Anda.
+                                </p>
+                            </div>
+                        ) : (
+                            laporanData.map((laporan) => (
+                                <div
+                                    key={laporan.id}
+                                    className="bg-white p-4 sm:p-5 rounded-[1.8rem] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between border border-slate-100 hover:border-emerald-200 hover:shadow-md transition-all duration-300"
+                                >
+                                    {/* LEFT */}
+                                    <div className="flex items-center gap-4 mb-4 sm:mb-0 w-full sm:w-auto">
+                                        <div className="w-14 h-14 bg-slate-100 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
+                                            <img
+                                                src={
+                                                    laporan.image ||
+                                                    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde'
+                                                }
+                                                className="w-full h-full object-cover"
+                                                alt="avatar"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-[1.5px] h-8 bg-slate-100 hidden sm:block"></div>
+
+                                            <div>
+                                                <h3 className="font-bold text-slate-800 text-sm lg:text-base leading-snug">
+                                                    {laporan.nama}
+                                                </h3>
+
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">
+                                                        {laporan.tanggal}
+                                                    </span>
+
+                                                    <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+
+                                                    <span className="text-[10px] text-emerald-600 font-bold uppercase">
+                                                        {laporan.jam}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="flex items-center gap-5">
-                                    <span className="text-[11px] text-gray-400 font-bold">{laporan.jam}</span>
-                                    <div className="flex items-center gap-3">
-                                        <button onClick={() => handleUpdate(laporan.id, 'diterima')} className="text-emerald-600 hover:scale-110 transition"><Check size={20} /></button>
-                                        <button onClick={() => handleUpdate(laporan.id, 'revisi')} className="text-red-700 hover:scale-110 transition"><X size={20} /></button>
-                                        <Link href={route('verifikasi.show', laporan.id)} className="text-blue-500 hover:scale-110 transition"><Eye size={20} /></Link>
+                                    {/* ACTION */}
+                                    <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-none border-slate-50">
+                                        <div className="flex items-center gap-1 sm:gap-2">
+                                            <button
+                                                onClick={() =>
+                                                    handleUpdate(
+                                                        laporan.id,
+                                                        'diterima'
+                                                    )
+                                                }
+                                                className="p-2 sm:p-3 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                                                title="Terima Laporan"
+                                            >
+                                                <Check
+                                                    size={22}
+                                                    strokeWidth={2.5}
+                                                />
+                                            </button>
+
+                                            <button
+                                                onClick={() =>
+                                                    handleUpdate(
+                                                        laporan.id,
+                                                        'revisi'
+                                                    )
+                                                }
+                                                className="p-2 sm:p-3 text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                title="Minta Revisi"
+                                            >
+                                                <X
+                                                    size={22}
+                                                    strokeWidth={2.5}
+                                                />
+                                            </button>
+                                        </div>
+
+                                        <div className="w-px h-6 bg-slate-200"></div>
+
+                                        <Link
+                                            href={route(
+                                                'verifikasi.show',
+                                                laporan.id
+                                            )}
+                                            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs hover:bg-emerald-700 hover:text-white transition-all shadow-sm"
+                                        >
+                                            <Eye size={16} />
+                                            Detail
+                                        </Link>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    )}
+                            ))
+                        )}
+                    </div>
                 </div>
             </main>
         </div>

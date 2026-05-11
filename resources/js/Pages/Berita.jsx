@@ -1,10 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import Sidebar from '@/Components/Sidebar';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-  LayoutDashboard,
-  Users,
   Newspaper,
-  ClipboardCheck,
   Bell,
   LogOut,
   Plus,
@@ -12,194 +10,329 @@ import {
   Trash,
   Pencil,
   Filter,
-  ChevronRight
+  ChevronRight,
+  Calendar,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function Berita({ berita = [] }) {
-  const { props, url } = usePage();
+  const { props } = usePage();
   const user = props.auth?.user;
 
   const [showFilter, setShowFilter] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
+  const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState(null);
 
-  const menuClass = (path) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition font-medium
-    ${url.startsWith(path)
-      ? "bg-green-100 text-green-700 shadow-sm"
-      : "text-gray-500 hover:bg-gray-100"
-    }`;
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      router.get(
+        '/berita',
+        { search, filter: activeFilter },
+        {
+          preserveState: true,
+          replace: true,
+        }
+      );
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [search]);
 
   const applyFilter = (type) => {
-    router.get('/admin/berita', { filter: type }, {
-      preserveState: true,
-      replace: true
-    });
+    setActiveFilter(type);
+
+    router.get(
+      '/berita',
+      { filter: type, search },
+      {
+        preserveState: true,
+        replace: true,
+      }
+    );
+
     setShowFilter(false);
   };
 
   const handleDelete = (id) => {
     Swal.fire({
-      title: 'Yakin mau di hapus?',
-      text: 'Data tidak bisa dikembalikan!',
+      title: 'Konfirmasi Hapus',
+      text: 'Apakah Anda yakin ingin menghapus berita ini?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Hapus',
-      confirmButtonColor: '#ef4444'
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#dc2626',
     }).then((result) => {
       if (result.isConfirmed) {
-        router.delete(`/admin/berita/${id}`);
+        router.delete(`/berita/${id}`, {
+          preserveScroll: true,
+          onSuccess: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Berhasil',
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          },
+        });
       }
     });
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-gray-900">
+    <div className="flex min-h-screen bg-white font-sans text-gray-900">
       <Head title="Manajemen Berita" />
 
-      {/* LOGOUT MODAL */}
-      {showLogout && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999]">
-          <div className="bg-white p-6 rounded-2xl w-80 shadow-xl">
-            <h2 className="font-bold mb-2">Konfirmasi Logout</h2>
-            <p className="text-sm text-gray-500 mb-5">Yakin mau keluar?</p>
-            <div className="flex justify-end gap-3">
-              <button onClick={() => setShowLogout(false)} className="px-4 py-2 border rounded-lg">Batal</button>
-              <button onClick={() => router.post('/logout')} className="px-4 py-2 bg-red-500 text-white rounded-lg">Logout</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r flex flex-col justify-between p-6 fixed h-full shadow-sm">
-        <div>
-        <div className="flex items-center gap-3 mb-10">
-            <img
-                src="/images/pokjawas.png"
-                className="w-10 h-10 object-contain"
-                alt="Logo"
-            />
+      <Sidebar />
 
-        <div>
-            <h1 className="font-bold text-sm leading-tight">Pokjawas Kemenag</h1>
-            <p className="text-[10px] text-gray-400">
-            Kabupaten Tangerang
-            </p>
-        </div>
-</div>
-          <p className="text-[10px] text-gray-400 mb-4 uppercase font-bold px-2">Menu Utama</p>
-
-          <div onClick={() => router.get('/admin/dashboard')} className={menuClass('/admin/dashboard')}>
-            <LayoutDashboard size={18} /> Dashboard
-          </div>
-          <div onClick={() => router.get('/admin/users')} className={menuClass('/admin/users')}>
-            <Users size={18} /> User
-          </div>
-          <div onClick={() => router.get('/admin/berita')} className={menuClass('/admin/berita')}>
-            <Newspaper size={18} /> Berita
-          </div>
-          <div onClick={() => router.get('/admin/verifikasi')} className={menuClass('/admin/verifikasi')}>
-            <ClipboardCheck size={18} /> Verifikasi
-          </div>
-        </div>
-
-        <button onClick={() => setShowLogout(true)} className="flex items-center gap-2 text-gray-400 hover:text-red-500">
-          <LogOut size={18} /> Logout
-        </button>
-      </aside>
-
-      {/* MAIN */}
-      <main className="flex-1 ml-64">
-
+      {/* MAIN CONTENT */}
+      <main className="flex-1 lg:ml-64 bg-white min-h-screen">
         {/* NAVBAR */}
-        <div className="flex justify-between items-center px-8 py-6 bg-white border-b sticky top-0 shadow-sm">
-          <h1 className="text-3xl font-black text-gray-800">Manajemen Berita</h1>
+        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+          <div className="flex justify-between items-center px-4 lg:px-8 py-4">
+            <div className='ml-14 lg:ml-0'>
+              <h1 className="text-xl lg:text-2xl font-bold text-slate-800">
+                Manajemen Berita
+              </h1>
 
-          <div className="flex items-center gap-6">
-            <Bell size={20} className="text-gray-400" />
+              <p className="hidden sm:block text-xs text-slate-400 mt-0.5 font-medium">
+                Kelola informasi resmi
+              </p>
+            </div>
 
-            <div className="h-6 w-px bg-gray-200"></div>
+            <div className="flex items-center gap-2 lg:gap-4">
+              <button className="relative p-2 text-slate-400 hover:text-green-600 transition-colors">
+                <Bell size={20} />
 
-            <div className="flex items-center gap-3 cursor-pointer">
-              <div className="text-right">
-                <p className="text-sm font-bold">{user?.name}</p>
-                <p className="text-[10px] text-gray-400 uppercase">Admin</p>
-              </div>
-              <div className="w-10 h-10 bg-green-700 text-white flex items-center justify-center rounded-xl font-bold">
-                {user?.name?.charAt(0)}
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+              </button>
+
+              <div className="h-6 w-px bg-slate-200 mx-1"></div>
+
+              <div className="flex items-center gap-3 pl-1">
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-bold text-slate-700 leading-none">
+                    {user?.name}
+                  </p>
+
+                  <p className="text-[9px] text-slate-400 uppercase tracking-tighter mt-1">
+                    Admin
+                  </p>
+                </div>
+
+                <div className="w-9 h-9 bg-green-700 text-white flex items-center justify-center rounded-xl font-bold shadow-sm">
+                  {user?.name?.charAt(0)?.toUpperCase()}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* CONTENT */}
-        <div className="p-8">
+        <div className="p-4 lg:p-8">
+          {/* STATS */}
+          <div className="bg-green-700 rounded-2xl p-5 lg:p-6 mb-6 text-white shadow-lg relative overflow-hidden group">
+            <div className="relative z-10 flex justify-between items-center">
+              <div>
+                <p className="text-green-100 text-xs lg:text-sm font-medium">
+                  Total Berita Dipublikasi
+                </p>
 
-          {/* ACTION BAR */}
-          <div className="flex justify-between items-center mb-8">
-            <div className="relative w-1/3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <p className="text-2xl lg:text-4xl font-bold mt-1">
+                  {berita.length}
+                </p>
+              </div>
+
+              <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
+                <Newspaper size={28} className="text-white" />
+              </div>
+            </div>
+
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
+          </div>
+
+          {/* ACTION */}
+          <div className="flex flex-col sm:flex-row justify-between items-stretch gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={18}
+              />
+
               <input
                 type="text"
-                placeholder="Search berita..."
-                className="pl-10 pr-4 py-2 w-full rounded-xl border-none shadow-sm focus:ring-2 focus:ring-green-500"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cari judul berita..."
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-green-600 focus:ring-0 transition-all outline-none text-sm"
               />
             </div>
 
-            <div className="flex gap-2 relative">
-              <Link href="/admin/berita/tambah" className="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800">
+            <div className="flex gap-2">
+              <Link
+                href="/berita/tambah"
+                className="flex-1 sm:flex-none bg-green-700 text-white px-5 py-3 rounded-xl hover:bg-green-800 transition-all flex items-center justify-center gap-2 font-semibold shadow-sm text-sm"
+              >
                 <Plus size={18} />
+                Tambah
               </Link>
 
-              <button onClick={() => setShowFilter(!showFilter)} className="bg-white border p-2 rounded-lg">
-                <Filter size={18} />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilter(!showFilter)}
+                  className={`h-full px-4 rounded-xl border transition-all ${
+                    showFilter
+                      ? 'bg-slate-800 border-slate-800 text-white'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Filter size={18} />
+                </button>
 
-              {showFilter && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border py-2 z-50">
-                  <button onClick={() => applyFilter('hari-ini')} className="block w-full text-left px-4 py-2 hover:bg-gray-50">Hari Ini</button>
-                  <button onClick={() => applyFilter('terbaru')} className="block w-full text-left px-4 py-2 hover:bg-gray-50">Terbaru</button>
-                  <button onClick={() => applyFilter('terlama')} className="block w-full text-left px-4 py-2 hover:bg-gray-50">Terlama</button>
-                </div>
-              )}
+                {showFilter && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
+                    <button
+                      onClick={() => applyFilter('hari-ini')}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-2"
+                    >
+                      <Calendar size={14} />
+                      Hari Ini
+                    </button>
+
+                    <button
+                      onClick={() => applyFilter('semua')}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-2"
+                    >
+                      <ChevronRight size={14} />
+                      Semua Berita
+                    </button>
+
+                    <button
+                      onClick={() => applyFilter('terlama')}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-2"
+                    >
+                      <ChevronRight size={14} />
+                      Terlama
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* LIST BERITA */}
+          {/* GRID */}
           {berita.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-dashed">
-              <p className="text-gray-400">Belum ada berita</p>
+            <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+              <Newspaper
+                size={48}
+                className="mx-auto text-slate-300 mb-3"
+              />
+
+              <p className="text-slate-500 font-medium">
+                Belum ada data berita
+              </p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {berita.map((item) => (
-                <div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border hover:shadow-md transition">
-                  <div className="w-full h-40 bg-gray-100 rounded-2xl mb-3 overflow-hidden">
-                    {item.gambar && (
-                      <img src={`/storage/${item.gambar}`} className="w-full h-full object-cover" />
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden group"
+                >
+                  <div className="relative h-44 bg-slate-100">
+                    {item.gambar ? (
+                      <img
+                        src={`/storage/${item.gambar}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <Newspaper size={40} />
+                      </div>
                     )}
+
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase shadow-sm">
+                        {item.kategori || 'Info'}
+                      </span>
+                    </div>
                   </div>
 
-                  <p className="text-xs text-green-600 font-bold uppercase">{item.kategori}</p>
-                  <h3 className="font-bold text-sm line-clamp-2">{item.judul}</h3>
-                  <p className="text-xs text-gray-400 mb-2">{item.created_at}</p>
+                  <div className="p-4 flex flex-col flex-1">
+                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-2 font-medium">
+                      <Calendar size={12} />
+                      {item.created_at}
+                    </div>
 
-                  <div className="flex justify-end gap-2">
-                    <Link href={`/admin/berita/${item.id}/edit`} className="text-yellow-500 p-2 hover:bg-yellow-50 rounded-lg">
-                      <Pencil size={16} />
-                    </Link>
-                    <button onClick={() => handleDelete(item.id)} className="text-red-500 p-2 hover:bg-red-50 rounded-lg">
-                      <Trash size={16} />
-                    </button>
+                    <h3 className="font-bold text-slate-800 text-sm mb-2 line-clamp-2 group-hover:text-green-700 transition-colors">
+                      {item.judul}
+                    </h3>
+
+                    <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-1">
+                      {item.isi}
+                    </p>
+
+                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-50">
+                      <Link
+                        href={`/berita/${item.id}/edit`}
+                        className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                      >
+                        <Pencil size={16} />
+                      </Link>
+
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-
       </main>
+
+      {/* MODAL LOGOUT */}
+      {showLogout && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <LogOut size={28} className="text-red-500" />
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-2">
+                Konfirmasi Logout
+              </h3>
+
+              <p className="text-slate-500 mb-6">
+                Apakah Anda yakin ingin keluar dari sistem?
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => router.post('/logout')}
+                  className="flex-1 bg-red-500 text-white py-2.5 rounded-xl hover:bg-red-600 transition-colors font-medium"
+                >
+                  Ya, Logout
+                </button>
+
+                <button
+                  onClick={() => setShowLogout(false)}
+                  className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl hover:bg-slate-200 transition-colors font-medium"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
