@@ -25,7 +25,7 @@ Route::get('/', function () {
 /* ================= DASHBOARD & UMUM ================= */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/dashboard', function () {
+    Route::get('/admin/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 

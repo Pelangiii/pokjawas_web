@@ -107,8 +107,8 @@ export default function Sidebar() {
             </div>
 
             <div
-              onClick={() => router.get('/admin/berita')}
-              className={menuClass('/admin/berita')}
+              onClick={() => router.get('/berita')}
+              className={menuClass('/berita')}
             >
               <Newspaper size={18} />
               Manajemen Berita

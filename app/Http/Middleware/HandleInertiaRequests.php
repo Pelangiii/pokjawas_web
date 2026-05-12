@@ -34,11 +34,12 @@ class HandleInertiaRequests extends Middleware
             'notifications' => function () {
                 if (!Auth::check()) return [];
 
-                return Laporan::where('user_id', Auth::id())
-                    ->where('status', 'revisi')
-                    ->whereNotNull('feedback')
-                    ->latest()
-                    ->get();
+                // return Laporan::where('user_id', Auth::id())
+                //     ->where('status', 'revisi')
+                //     ->whereNotNull('feedback')
+                //     ->latest()
+                //     ->get();
+                return [];
             },
 
         ]);
