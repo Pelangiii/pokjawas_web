@@ -17,7 +17,7 @@ class UserController extends Controller
               ->orWhere('email', 'like', '%' . $request->search . '%');
     }
 
-    return Inertia::render('Admin/ManagementUser', [
+    return Inertia::render('Manajement', [
         'users' => $query->get(),
         'filters' => $request->only(['search', 'filter'])
     ]);

@@ -15,14 +15,13 @@ import {
     X,
 } from "lucide-react";
 
-export default function ManagementUser({ users, filters }) {
+export default function Manajement({ users, filters }) {
     const { props } = usePage();
     const userAuth = props.auth?.user;
 
     const [view, setView] = useState('list');
     const [selectedUser, setSelectedUser] = useState(null);
     const [previewPhoto, setPreviewPhoto] = useState(null);
-    const [showLogout, setShowLogout] = useState(false);
     const [showNotif, setShowNotif] = useState(false);
 
     const { data, setData, post, processing, reset } = useForm({
@@ -38,7 +37,7 @@ export default function ManagementUser({ users, filters }) {
 
     const handleSearch = (e) => {
         router.get(
-            '/admin/users',
+            '/users',
             {
                 search: e.target.value,
                 filter: filters.filter
@@ -99,70 +98,77 @@ export default function ManagementUser({ users, filters }) {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-gray-900">
-            <Head title="Manajemen User" />
+        <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-gray-900 overflow-x-hidden">
+            <Head title="Manajement User" />
 
             {/* SIDEBAR */}
             <Sidebar />
 
             {/* MAIN */}
-            <main className="flex-1 lg:ml-64">
+            <main className="flex-1 w-full lg:ml-64 overflow-x-hidden">
 
-                {/* NAVBAR */}
-                <div className="flex justify-between items-center px-8 py-6 bg-white border-b sticky top-0 z-30 shadow-sm">
+              {/* NAVBAR */}
+<div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <div className="flex justify-between items-center px-4 lg:px-8 py-4">
 
-                    <h1 className="text-3xl font-black text-gray-800 tracking-tight">
-                        Manajemen User
-                    </h1>
+        {/* TITLE */}
+        <div className="ml-14 lg:ml-0">
+            <h1 className="text-xl lg:text-2xl font-bold text-slate-800">
+                Manajement User
+            </h1>
 
-                    <div className="flex items-center gap-6">
+            <p className="hidden sm:block text-xs text-slate-400 mt-0.5 font-medium">
+                Kelola data pengguna sistem
+            </p>
+        </div>
 
-                        {/* NOTIF */}
-                        <div className="relative">
-                            <Bell
-                                size={20}
-                                className="cursor-pointer text-gray-400 hover:text-green-600 transition"
-                                onClick={() => setShowNotif(!showNotif)}
-                            />
+        {/* RIGHT */}
+        <div className="flex items-center gap-2 lg:gap-4">
 
-                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                        </div>
+            {/* NOTIF */}
+            <button className="relative p-2 text-slate-400 hover:text-green-600 transition-colors">
+                <Bell size={20} />
 
-                        <div className="h-6 w-px bg-gray-200"></div>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+            </button>
 
-                        {/* PROFILE */}
-                        <div className="flex items-center gap-3">
-                            <div className="text-right">
-                                <p className="text-sm font-bold text-gray-800">
-                                    {userAuth?.name || "Admin"}
-                                </p>
+            <div className="h-6 w-px bg-slate-200 mx-1"></div>
 
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                                    Administrator
-                                </p>
-                            </div>
+            {/* PROFILE */}
+            <div className="flex items-center gap-3 pl-1">
 
-                            <div className="w-10 h-10 rounded-xl bg-green-700 text-white flex items-center justify-center font-bold">
-                                {userAuth?.name?.charAt(0) || "A"}
-                            </div>
-                        </div>
-                    </div>
+                <div className="text-right hidden sm:block">
+                    <p className="text-xs font-bold text-slate-700 leading-none">
+                        {userAuth?.name}
+                    </p>
+
+                    <p className="text-[9px] text-slate-400 uppercase tracking-tighter mt-1">
+                        Administrator
+                    </p>
                 </div>
 
+                <div className="w-9 h-9 bg-green-700 text-white flex items-center justify-center rounded-xl font-bold shadow-sm">
+                    {userAuth?.name?.charAt(0)?.toUpperCase()}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                 {/* CONTENT */}
-                <div className="p-4 lg:p-8">
+                <div className="p-3 sm:p-5 lg:p-8">
 
                     {/* LIST */}
                     {view === 'list' && (
                         <div className="animate-in fade-in duration-500">
 
                             {/* TOPBAR */}
-                            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                            <div className="flex flex-col xl:flex-row justify-between xl:items-center mb-8 gap-4">
 
-                                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                                <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
 
                                     {/* SEARCH */}
-                                    <div className="relative flex-1 md:w-80">
+                                    <div className="relative flex-1 xl:w-80">
                                         <Search
                                             className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                                             size={18}
@@ -179,7 +185,7 @@ export default function ManagementUser({ users, filters }) {
 
                                     {/* FILTER */}
                                     <select
-                                        className="bg-white rounded-2xl px-5 py-3 font-bold shadow-sm border-none focus:ring-2 focus:ring-green-800 text-gray-700 cursor-pointer"
+                                        className="bg-white rounded-2xl px-5 py-3 font-bold shadow-sm border-none focus:ring-2 focus:ring-green-800 text-gray-700 cursor-pointer w-full sm:w-auto"
                                         value={filters.filter || 'latest'}
                                         onChange={(e) =>
                                             router.get(
@@ -208,7 +214,7 @@ export default function ManagementUser({ users, filters }) {
                                         setPreviewPhoto(null);
                                         setView('add');
                                     }}
-                                    className="bg-green-800 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-green-900 transition w-full md:w-auto justify-center"
+                                    className="bg-green-800 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-green-900 transition w-full sm:w-auto justify-center"
                                 >
                                     <Plus size={18} />
                                     Tambah User
@@ -216,7 +222,7 @@ export default function ManagementUser({ users, filters }) {
                             </div>
 
                             {/* CARD */}
-                            <div className="bg-white rounded-[2rem] p-4 lg:p-8 shadow-sm border border-gray-100">
+                            <div className="bg-white rounded-[2rem] p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100">
 
                                 <div className="grid gap-4">
 
@@ -225,12 +231,12 @@ export default function ManagementUser({ users, filters }) {
 
                                             <div
                                                 key={u.id}
-                                                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 bg-white border border-gray-100 rounded-[24px] hover:shadow-md transition-all"
+                                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 bg-white border border-gray-100 rounded-3xl hover:shadow-md transition-all"
                                             >
 
-                                                <div className="flex items-center gap-5">
+                                                <div className="flex items-center gap-4 sm:gap-5 min-w-0">
 
-                                                    <div className="w-14 h-14 bg-gray-100 rounded-2xl overflow-hidden">
+                                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-2xl overflow-hidden shrink-0">
                                                         <img
                                                             src={
                                                                 u.photo
@@ -242,8 +248,8 @@ export default function ManagementUser({ users, filters }) {
                                                         />
                                                     </div>
 
-                                                    <div>
-                                                        <p className="font-bold text-lg text-gray-800">
+                                                    <div className="min-w-0">
+                                                        <p className="font-bold text-base sm:text-lg text-gray-800 truncate">
                                                             {u.name}
                                                         </p>
 
@@ -254,7 +260,7 @@ export default function ManagementUser({ users, filters }) {
                                                 </div>
 
                                                 {/* ACTION */}
-                                                <div className="flex gap-2">
+                                                <div className="flex flex-wrap gap-2">
 
                                                     <button
                                                         onClick={() => {
@@ -305,16 +311,16 @@ export default function ManagementUser({ users, filters }) {
 
                     {/* ADD / EDIT */}
                     {(view === 'add' || view === 'edit') && (
-                        <div className="max-w-2xl mx-auto bg-white rounded-[2.5rem] p-10 shadow-2xl border border-gray-50 relative">
+                        <div className="max-w-2xl mx-auto bg-white rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 lg:p-10 shadow-2xl border border-gray-50 relative">
 
                             <button
                                 onClick={() => setView('list')}
-                                className="absolute top-8 left-8 p-2 text-gray-300 hover:text-gray-800 transition"
+                                className="absolute top-5 left-5 sm:top-8 sm:left-8 p-2 text-gray-300 hover:text-gray-800 transition"
                             >
                                 <ArrowLeft size={24} />
                             </button>
 
-                            <h3 className="text-2xl font-black text-center mb-10 text-gray-800">
+                            <h3 className="text-xl sm:text-2xl font-black text-center mb-8 sm:mb-10 text-gray-800">
                                 {view === 'add'
                                     ? 'Tambah User Baru'
                                     : 'Perbarui Data User'}
@@ -328,17 +334,19 @@ export default function ManagementUser({ users, filters }) {
                                 {/* PHOTO */}
                                 <div className="flex justify-center mb-8">
 
-                                    <label className="w-28 h-28 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden hover:border-green-500 transition">
+                                    <label className="w-24 h-24 sm:w-28 sm:h-28 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden hover:border-green-500 transition">
 
                                         {data.photo ? (
                                             <img
                                                 src={URL.createObjectURL(data.photo)}
                                                 className="w-full h-full object-cover"
+                                                alt="Preview"
                                             />
                                         ) : previewPhoto ? (
                                             <img
                                                 src={previewPhoto}
                                                 className="w-full h-full object-cover"
+                                                alt="Preview"
                                             />
                                         ) : (
                                             <div className="text-center">
@@ -450,9 +458,9 @@ export default function ManagementUser({ users, filters }) {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full bg-green-800 text-white py-5 rounded-2xl font-black text-lg mt-4 hover:bg-green-900 transition"
+                                    className="w-full bg-green-800 text-white py-4 sm:py-5 rounded-2xl font-black text-base sm:text-lg mt-4 hover:bg-green-900 transition"
                                 >
-                                    Simpan Data
+                                    {processing ? 'Menyimpan...' : 'Simpan Data'}
                                 </button>
                             </form>
                         </div>
@@ -460,16 +468,16 @@ export default function ManagementUser({ users, filters }) {
 
                     {/* DETAIL */}
                     {view === 'detail' && selectedUser && (
-                        <div className="max-w-3xl mx-auto bg-white rounded-[3rem] p-16 shadow-2xl border border-gray-50 text-center relative">
+                        <div className="max-w-3xl mx-auto bg-white rounded-[2rem] sm:rounded-[3rem] p-5 sm:p-8 lg:p-16 shadow-2xl border border-gray-50 text-center relative">
 
                             <button
                                 onClick={() => setView('list')}
-                                className="absolute top-10 left-10 text-gray-300 hover:text-gray-800 transition"
+                                className="absolute top-5 left-5 sm:top-10 sm:left-10 text-gray-300 hover:text-gray-800 transition"
                             >
                                 <X size={30} />
                             </button>
 
-                            <div className="w-44 h-44 bg-gray-100 rounded-[3rem] mx-auto mb-8 overflow-hidden border-8 border-white shadow-2xl">
+                            <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 bg-gray-100 rounded-[2rem] sm:rounded-[3rem] mx-auto mb-6 sm:mb-8 overflow-hidden border-4 sm:border-8 border-white shadow-2xl">
                                 <img
                                     src={
                                         selectedUser.photo
@@ -481,33 +489,33 @@ export default function ManagementUser({ users, filters }) {
                                 />
                             </div>
 
-                            <h2 className="text-4xl font-black mb-12 tracking-tight text-gray-800">
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-8 sm:mb-12 tracking-tight text-gray-800 break-words">
                                 {selectedUser.name}
                             </h2>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-left">
 
-                                <div className="p-6 bg-gray-50 rounded-3xl">
+                                <div className="p-4 sm:p-6 bg-gray-50 rounded-2xl sm:rounded-3xl">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">
                                         NIP Pegawai
                                     </p>
 
-                                    <p className="font-bold text-gray-700 text-lg">
+                                    <p className="font-bold text-gray-700 text-lg break-words">
                                         {selectedUser.nip || '---'}
                                     </p>
                                 </div>
 
-                                <div className="p-6 bg-gray-50 rounded-3xl">
+                                <div className="p-4 sm:p-6 bg-gray-50 rounded-2xl sm:rounded-3xl">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">
                                         Nomor Telepon
                                     </p>
 
-                                    <p className="font-bold text-gray-700 text-lg">
+                                    <p className="font-bold text-gray-700 text-lg break-words">
                                         {selectedUser.phone || '---'}
                                     </p>
                                 </div>
 
-                                <div className="p-6 bg-gray-50 rounded-3xl">
+                                <div className="p-4 sm:p-6 bg-gray-50 rounded-2xl sm:rounded-3xl">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">
                                         Email
                                     </p>
@@ -517,22 +525,22 @@ export default function ManagementUser({ users, filters }) {
                                     </p>
                                 </div>
 
-                                <div className="p-6 bg-gray-50 rounded-3xl">
+                                <div className="p-4 sm:p-6 bg-gray-50 rounded-2xl sm:rounded-3xl">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">
                                         Tanggal Lahir
                                     </p>
 
-                                    <p className="font-bold text-gray-700 text-lg">
+                                    <p className="font-bold text-gray-700 text-lg break-words">
                                         {selectedUser.birth_date || '---'}
                                     </p>
                                 </div>
 
-                                <div className="p-6 bg-gray-50 rounded-3xl md:col-span-2">
+                                <div className="p-4 sm:p-6 bg-gray-50 rounded-2xl sm:rounded-3xl md:col-span-2">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">
                                         Alamat Lengkap
                                     </p>
 
-                                    <p className="font-bold text-gray-700 text-lg">
+                                    <p className="font-bold text-gray-700 text-lg break-words">
                                         {selectedUser.address || '---'}
                                     </p>
                                 </div>

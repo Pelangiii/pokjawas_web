@@ -99,8 +99,8 @@ export default function Sidebar() {
             </div>
 
             <div
-              onClick={() => router.get('/admin/users')}
-              className={menuClass('/admin/users')}
+              onClick={() => router.get('/users')}
+              className={menuClass('/users')}
             >
               <Users size={18} />
               Manajemen User
