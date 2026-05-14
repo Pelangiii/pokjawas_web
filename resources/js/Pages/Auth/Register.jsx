@@ -19,87 +19,139 @@ export default function Register() {
     };
 
     return (
-        <div>
+        <div className="min-h-screen bg-white overflow-hidden">
             <Head title="Register" />
 
-            <div className="relative w-full bg-white rounded-xl flex flex-col items-center md:px-20 min-h-[800px]">
+            <div className="relative w-full flex flex-col items-center px-4 sm:px-6 md:px-10 min-h-screen">
 
                 {/* BUTTON BACK */}
                 <button
                     type="button"
                     onClick={() => window.history.back()}
-                    className="absolute top-8 left-8 flex items-center gap-3 border border-slate-700 text-slate-700 px-6 py-3 rounded-full hover:bg-slate-100 transition text-sm font-medium"
+                    className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 border border-slate-700 text-slate-700 px-3 sm:px-5 py-2 rounded-full hover:bg-slate-100 transition text-[10px] sm:text-sm font-medium z-20 bg-white/80"
                 >
-                    ← Kembali Halaman
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 sm:h-4 sm:w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                        />
+                    </svg>
+
+                    Kembali Halaman
                 </button>
 
                 {/* LOGO */}
-                <div className="mt-10 mb-6">
-                    <img 
+                <div className="mt-20 sm:mt-16 md:mt-10 mb-5 sm:mb-6 relative z-10">
+                    <img
                         src="/images/pokjawas.png"
-                        className="w-28"
+                        alt="Logo Kemenag"
+                        className="w-24 sm:w-28 md:w-32 h-auto mx-auto"
                     />
                 </div>
 
                 {/* TITLE */}
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">
+                <div className="text-center mb-8 sm:mb-10 relative z-10 px-2">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2D3748] leading-tight">
                         Pokjawas Kemenag
                     </h2>
-                    <h2 className="text-3xl md:text-4xl font-bold text-[#2D3748]">
+
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2D3748] leading-tight">
                         Kabupaten Tangerang
                     </h2>
                 </div>
 
                 {/* BACKGROUND */}
-                <div 
-                    className="absolute bottom-1 w-full h-2/3"
-                    style={{ backgroundImage: "url('/images/gedung.png')" }}
+                <div
+                    className="absolute bottom-0 left-0 w-full h-[55%] sm:h-[70%] bg-cover bg-no-repeat bg-bottom opacity-100"
+                    style={{
+                        backgroundImage: "url('/images/city.png')"
+                    }}
                 ></div>
 
                 {/* FORM */}
-                <form onSubmit={submit} className="w-full max-w-md space-y-4 relative z-10">
+                <form
+                    onSubmit={submit}
+                    className="w-full max-w-md space-y-4 relative z-10 px-1"
+                >
 
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        className="w-full px-6 py-4 rounded-2xl border shadow-sm"
-                    />
-                    {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
+                    {/* NAME */}
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm sm:text-base text-gray-700 placeholder-gray-400 transition"
+                        />
 
-                    <input
-                        type="email"
-                        placeholder="E-mail"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        className="w-full px-6 py-4 rounded-2xl border shadow-sm"
-                    />
-                    {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+                        {errors.name && (
+                            <p className="text-red-500 text-xs mt-1 ml-2">
+                                {errors.name}
+                            </p>
+                        )}
+                    </div>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        className="w-full px-6 py-4 rounded-2xl border shadow-sm"
-                    />
-                    {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
+                    {/* EMAIL */}
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="E-mail"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm sm:text-base text-gray-700 placeholder-gray-400 transition"
+                        />
 
-                    <input
-                        type="password"
-                        placeholder="Konfirmasi Password"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        className="w-full px-6 py-4 rounded-2xl border shadow-sm"
-                    />
+                        {errors.email && (
+                            <p className="text-red-500 text-xs mt-1 ml-2">
+                                {errors.email}
+                            </p>
+                        )}
+                    </div>
 
-                    <div className="flex justify-end pt-4">
+                    {/* PASSWORD */}
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm sm:text-base text-gray-700 placeholder-gray-400 transition"
+                        />
+
+                        {errors.password && (
+                            <p className="text-red-500 text-xs mt-1 ml-2">
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* CONFIRM PASSWORD */}
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Konfirmasi Password"
+                            value={data.password_confirmation}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm sm:text-base text-gray-700 placeholder-gray-400 transition"
+                        />
+                    </div>
+
+                    {/* BUTTON */}
+                    <div className="flex justify-center sm:justify-end pt-3 sm:pt-4">
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#2D5A47] text-white px-10 py-2.5 rounded-xl hover:bg-[#234738] shadow-lg font-semibold disabled:opacity-50"
+                            className="bg-[#2D5A47] text-white w-full sm:w-auto px-10 py-3 rounded-xl hover:bg-[#234738] shadow-lg transition-all font-semibold text-sm sm:text-base disabled:opacity-50"
                         >
                             {processing ? 'Loading...' : 'Register'}
                         </button>
