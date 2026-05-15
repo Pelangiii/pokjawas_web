@@ -4,15 +4,16 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\User\LaporanController as UserLaporanController;
-use App\Http\Controllers\User\LaporanController;
 use App\Http\Controllers\User\ProfileController as UserProfileController;
 use App\Models\Laporan;
+use App\Models\Berita;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 /* ================= LANDING ================= */
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -23,11 +24,8 @@ Route::get('/', function () {
 });
 
 /* ================= DASHBOARD & UMUM ================= */
-Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/admin/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+Route::middleware(['auth'])->group(function () {
 
     // BERITA
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
@@ -37,11 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-    // VERIFIKASI LAPORAN
-    Route::get('/verifikasilaporan', [LaporanController::class, 'index'])->name('verifikasi.index');
-    Route::patch('/verifikasilaporan/{id}/status', [LaporanController::class, 'updateStatus'])->name('verifikasi.update');
-    Route::get('/verifikasilaporan/{id}', [LaporanController::class, 'show'])->name('verifikasi.show');
-
+// VERIFIKASI LAPORAN Route::get('/verifikasilaporan', [UserLaporanController::class, 'index']) ->name('verifikasi.index'); Route::patch('/verifikasilaporan/{id}/status', [UserLaporanController::class, 'updateStatus']) ->name('verifikasi.update'); Route::get('/verifikasilaporan/{id}', [UserLaporanController::class, 'show']) ->name('verifikasi.show');
     // USER MANAGEMENT
     Route::resource('/users', UserController::class);
 
@@ -51,23 +45,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [UserProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/* ================= ADMIN AREA (🔐 PROTECTED) ================= */
+/* ================= ADMIN AREA ================= */
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
+    // DASHBOARD ADMIN
     Route::get('/dashboard', function () {
-        return Inertia::render('AdminDashboard');
+
+        $beritas = Berita::latest()
+            ->take(5)
+            ->get();
+
+        return Inertia::render('AdminDashboard', [
+            'beritas' => $beritas
+        ]);
+
     })->name('admin.dashboard');
-    
-    Route::get('/users-list', function () {
-        return Inertia::render('Admin/Users/Index');
-    })->name('admin.users');
+
+    // PROFILE ADMIN
+    Route::get('/profile', function () {
+        return Inertia::render('AdminProfile');
+    })->name('admin.profile');
+
 });
 
 /* ================= USER AREA ================= */
+
 Route::middleware(['auth'])->prefix('user')->group(function () {
 
     // DASHBOARD USER
     Route::get('/dashboard', function () {
+
         $laporans = Laporan::where('user_id', Auth::id())
             ->latest()
             ->take(5)
@@ -76,6 +84,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         return Inertia::render('User/UserDashboard', [
             'laporans' => $laporans
         ]);
+
     })->name('user.dashboard');
 
     // LAPORAN

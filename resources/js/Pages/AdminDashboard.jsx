@@ -18,6 +18,7 @@ import {
 export default function AdminDashboard() {
   const { props } = usePage();
   const user = props.auth?.user;
+  const beritas = props.beritas || [];
 
   const [showNotif, setShowNotif] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -231,30 +232,52 @@ export default function AdminDashboard() {
 
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 space-y-4 flex-1 flex flex-col justify-center">
 
-                {[1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-4 p-2 rounded-2xl hover:bg-gray-50 transition cursor-pointer group"
-                  >
-                    <div className="w-16 h-14 rounded-2xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden font-bold text-[10px] text-gray-400 border border-transparent group-hover:border-gray-100">
-                      NEWS
-                    </div>
+            {beritas.length > 0 ? (
+  beritas.map((item) => (
+    <div
+      key={item.id}
+      className="flex items-center gap-4 p-2 rounded-2xl hover:bg-gray-50 transition cursor-pointer group"
+    >
+      {/* GAMBAR */}
+      <div className="w-16 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden border border-transparent group-hover:border-gray-100">
 
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold text-green-600 uppercase mb-0.5 tracking-tight">
-                        Informasi
-                      </p>
+        {item.gambar ? (
+          <img
+            src={`/storage/${item.gambar}`}
+            alt={item.judul}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-gray-400">
+            NEWS
+          </div>
+        )}
 
-                      <p className="text-sm font-bold text-gray-800 line-clamp-1 leading-tight">
-                        Workshop Peningkatan Mutu Madrasah Tangerang...
-                      </p>
+      </div>
 
-                      <p className="text-[10px] text-gray-400 mt-1">
-                        20 Mar 2026
-                      </p>
-                    </div>
-                  </div>
-                ))}
+      {/* ISI */}
+      <div className="flex-1">
+
+        <p className="text-[10px] font-bold text-green-600 uppercase mb-0.5 tracking-tight">
+          {item.kategori || "Informasi"}
+        </p>
+
+        <p className="text-sm font-bold text-gray-800 line-clamp-1 leading-tight">
+          {item.judul}
+        </p>
+
+        <p className="text-[10px] text-gray-400 mt-1">
+          {new Date(item.created_at).toLocaleDateString("id-ID")}
+        </p>
+
+      </div>
+    </div>
+  ))
+) : (
+  <p className="text-sm text-gray-400">
+    Belum ada berita terbaru
+  </p>
+)}
               </div>
             </section>
           </div>
