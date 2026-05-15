@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -34,11 +33,12 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // 🔥 ROLE OTOMATIS BERDASARKAN EMAIL
+        // ROLE OTOMATIS BERDASARKAN EMAIL
         $role = str_ends_with($request->email, '@pokjawas.com')
             ? 'admin'
             : 'pegawai';
 
+        // CREATE USER
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -46,16 +46,10 @@ class RegisteredUserController extends Controller
             'role' => $role,
         ]);
 
+        // EVENT REGISTER
         event(new Registered($user));
 
-        // 🔥 AUTO LOGIN SETELAH REGISTER
-        Auth::login($user);
-
-        // 🔥 REDIRECT SESUAI ROLE
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect()->route('user.dashboard');
+        // REDIRECT KE LOGIN (TIDAK AUTO LOGIN)
+        return redirect()->route('login');
     }
 }

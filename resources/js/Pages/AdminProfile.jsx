@@ -59,9 +59,9 @@ export default function AdminProfile({ user }) {
                 </div>
                 <div className="mt-4 text-center">
                   <h2 className="text-2xl font-bold text-gray-800">{user?.name}</h2>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest rounded-full">
-                    Administrator
-                  </span>
+                <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest rounded-full">
+  {user?.role === "admin" ? "Administrator" : "Pegawai"}
+</span>
                 </div>
               </div>
 

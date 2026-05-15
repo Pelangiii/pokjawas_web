@@ -109,7 +109,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="w-10 h-10 rounded-xl bg-green-700 text-white flex items-center justify-center font-bold shadow-md shadow-green-900/20">
-                {user?.name?.charAt(0) || "F"}
+                {user?.name?.charAt(0) || "Admin"}
               </div>
             </div>
           </div>
