@@ -135,6 +135,18 @@ class LaporanController extends Controller
         return redirect('/user/laporan');
     }
 
+    // 🔥 HALAMAN VERIFIKASI ADMIN
+    public function verifikasi()
+    {
+        $laporans = Laporan::with('user')
+            ->latest()
+            ->get();
+
+        return Inertia::render('Verifikasi/Index', [
+            'laporans' => $laporans
+        ]);
+    }
+
     // 🔥 ADMIN UPDATE STATUS
     public function updateStatus(Request $request, $id)
     {

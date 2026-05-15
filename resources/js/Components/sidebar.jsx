@@ -114,13 +114,7 @@ export default function Sidebar() {
               Manajemen Berita
             </div>
 
-            <div
-              onClick={() => router.get('/admin/verifikasi')}
-              className={menuClass('/admin/verifikasi')}
-            >
-              <ClipboardCheck size={18} />
-              Verifikasi Laporan
-            </div>
+            <div onClick={() => router.get('/admin/verifikasilaporan')} className={menuClass('/admin/verifikasilaporan')} > <ClipboardCheck size={18} /> Verifikasi Laporan </div>
           </nav>
         </div>
 

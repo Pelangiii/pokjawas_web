@@ -35,7 +35,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-// VERIFIKASI LAPORAN Route::get('/verifikasilaporan', [UserLaporanController::class, 'index']) ->name('verifikasi.index'); Route::patch('/verifikasilaporan/{id}/status', [UserLaporanController::class, 'updateStatus']) ->name('verifikasi.update'); Route::get('/verifikasilaporan/{id}', [UserLaporanController::class, 'show']) ->name('verifikasi.show');
     // USER MANAGEMENT
     Route::resource('/users', UserController::class);
 
@@ -61,6 +60,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         ]);
 
     })->name('admin.dashboard');
+
+    // VERIFIKASI LAPORAN
+    Route::get('/verifikasilaporan', [UserLaporanController::class, 'verifikasi'])
+        ->name('verifikasi.index');
+
+    Route::patch('/verifikasilaporan/{id}/status', [UserLaporanController::class, 'updateStatus'])
+        ->name('verifikasi.update');
+
+    Route::get('/verifikasilaporan/{id}', [UserLaporanController::class, 'show'])
+        ->name('verifikasi.show');
 
     // PROFILE ADMIN
     Route::get('/profile', function () {
