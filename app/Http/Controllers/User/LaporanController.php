@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\User;
 
+
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LaporanMasukMail;
 
 class LaporanController extends Controller
 {
@@ -30,30 +33,40 @@ class LaporanController extends Controller
         return Inertia::render('User/Laporan/Create');
     }
 
-    // 🔥 STORE (SUPPORT DRAFT)
+    // 🔥 STORE LAPORAN + EMAIL ADMIN
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'nullable', // draft boleh kosong
-            'description' => 'nullable',
+            'title' => 'nullable|string',
+            'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'status' => 'nullable|string'
         ]);
 
         $imagePath = null;
 
+        // 🔥 HANDLE IMAGE
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('laporan', 'public');
         }
 
-        Laporan::create([
+        // 🔥 CREATE LAPORAN
+        $laporan = Laporan::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,
-            'status' => $request->status ?? 'draft', // default draft
+
+            // default status
+            'status' => $request->status ?? 'pending',
+
+            // feedback awal kosong
             'feedback' => null
         ]);
+
+        // 🔥 KIRIM EMAIL KE ADMIN
+        Mail::to('admin@gmail.com')
+            ->send(new LaporanMasukMail($laporan));
 
         return redirect('/user/laporan');
     }
@@ -78,14 +91,14 @@ class LaporanController extends Controller
         ]);
     }
 
-    // 🔥 UPDATE (EDIT + HANDLE REVISI)
+    // 🔥 UPDATE USER
     public function update(Request $request, $id)
     {
         $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'title' => 'nullable',
-            'description' => 'nullable',
+            'title' => 'nullable|string',
+            'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'status' => 'nullable|string'
         ]);
@@ -93,17 +106,19 @@ class LaporanController extends Controller
         // 🔥 HANDLE IMAGE
         if ($request->hasFile('image')) {
 
+            // hapus image lama
             if ($laporan->image) {
                 Storage::disk('public')->delete($laporan->image);
             }
 
+            // upload image baru
             $laporan->image = $request->file('image')->store('laporan', 'public');
         }
 
-        // 🔥 LOGIC STATUS
+        // 🔥 STATUS LOGIC
         $newStatus = $request->status ?? $laporan->status;
 
-        // kalau sebelumnya revisi → balik ke proses
+        // kalau sebelumnya revisi
         if ($laporan->status === 'revisi') {
             $newStatus = 'proses';
         }
@@ -112,17 +127,38 @@ class LaporanController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'status' => $newStatus,
-            'feedback' => null // reset feedback setelah user edit
+
+            // reset feedback setelah revisi
+            'feedback' => null
         ]);
 
         return redirect('/user/laporan');
     }
 
-    // 🔥 DELETE
+    // 🔥 ADMIN UPDATE STATUS
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string',
+            'feedback' => 'nullable|string'
+        ]);
+
+        $laporan = Laporan::findOrFail($id);
+
+        $laporan->update([
+            'status' => $request->status,
+            'feedback' => $request->feedback,
+        ]);
+
+        return back();
+    }
+
+    // 🔥 DELETE LAPORAN
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);
 
+        // hapus image
         if ($laporan->image) {
             Storage::disk('public')->delete($laporan->image);
         }
@@ -131,4 +167,4 @@ class LaporanController extends Controller
 
         return redirect('/user/laporan');
     }
-}
+};

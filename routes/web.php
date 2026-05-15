@@ -4,7 +4,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\User\LaporanController as UserLaporanController;
-use App\Http\Controllers\User\LaporanController;
 use App\Http\Controllers\User\ProfileController as UserProfileController;
 use App\Models\Laporan;
 use App\Models\Berita;
@@ -26,7 +25,7 @@ Route::get('/', function () {
 
 /* ================= DASHBOARD & UMUM ================= */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // BERITA
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
@@ -36,11 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-    // VERIFIKASI LAPORAN
-    Route::get('/verifikasilaporan', [LaporanController::class, 'index'])->name('verifikasi.index');
-    Route::patch('/verifikasilaporan/{id}/status', [LaporanController::class, 'updateStatus'])->name('verifikasi.update');
-    Route::get('/verifikasilaporan/{id}', [LaporanController::class, 'show'])->name('verifikasi.show');
-
+// VERIFIKASI LAPORAN Route::get('/verifikasilaporan', [UserLaporanController::class, 'index']) ->name('verifikasi.index'); Route::patch('/verifikasilaporan/{id}/status', [UserLaporanController::class, 'updateStatus']) ->name('verifikasi.update'); Route::get('/verifikasilaporan/{id}', [UserLaporanController::class, 'show']) ->name('verifikasi.show');
     // USER MANAGEMENT
     Route::resource('/users', UserController::class);
 
