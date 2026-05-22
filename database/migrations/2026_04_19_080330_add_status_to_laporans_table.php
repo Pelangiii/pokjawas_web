@@ -6,23 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('laporans', function (Blueprint $table) {
-            $table->string('status')->default('draft');
+
+            $table->string('status')
+                ->default('pending');
+
+            $table->text('feedback')
+                ->nullable();
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('laporans', function (Blueprint $table) {
+
             $table->dropColumn('status');
+            $table->dropColumn('feedback');
+
         });
     }
 };

@@ -16,15 +16,9 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Di sini adalah tempat di mana Anda dapat mendaftarkan semua rute untuk
-| aplikasi Anda. Rute-rute ini dimuat oleh RouteServiceProvider dalam
-| kelompok yang berisi grup middleware "web".
-|
 */
 
 /* ================= LANDING PAGE ================= */
-
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -35,7 +29,6 @@ Route::get('/', function () {
 });
 
 /* ================= DASHBOARD & UMUM (AUTH REQUIRED) ================= */
-
 Route::middleware(['auth'])->group(function () {
 
     // BERITA MANAGEMENT
@@ -56,32 +49,20 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /* ================= ADMIN AREA (MIDDLEWARE ADMIN) ================= */
-
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-    // DASHBOARD ADMIN (Mengirim Data Berita & Antrean Laporan secara Dinamis)
+    // DASHBOARD ADMIN
     Route::get('/dashboard', function () {
+        $beritas = Berita::latest()->take(5)->get();
+        $laporans = Laporan::with('user')->latest()->take(5)->get();
 
-        // 1. Ambil 5 berita terbaru
-        $beritas = Berita::latest()
-            ->take(5)
-            ->get();
-
-        // 2. Ambil 5 laporan terbaru untuk ditaruh di antrean verifikasi dashboard
-        $laporans = Laporan::with('user')
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // 3. Render Dashboard Admin dengan mempassing kedua data tersebut
         return Inertia::render('AdminDashboard', [
             'beritas' => $beritas,
             'laporans' => $laporans 
         ]);
-
     })->name('admin.dashboard');
 
-    // VERIFIKASI LAPORAN (Diurus oleh ReportController utama backend)
+    // VERIFIKASI LAPORAN (Urusan Utama Status Laporan)
     Route::get('/verifikasilaporan', [ReportController::class, 'verifikasi'])
         ->name('verifikasi.index');
 
@@ -95,25 +76,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/profile', function () {
         return Inertia::render('AdminProfile');
     })->name('admin.profile');
-
 });
 
-/* ================= USER AREA (PENGALIRAN KHUSUS USER/PEGAWAI) ================= */
-
+/* ================= USER AREA ================= */
 Route::middleware(['auth'])->prefix('user')->group(function () {
 
     // DASHBOARD USER
     Route::get('/dashboard', function () {
-
-        $laporans = Laporan::where('user_id', Auth::id())
-            ->latest()
-            ->take(5)
-            ->get();
-
+        $laporans = Laporan::where('user_id', Auth::id())->latest()->take(5)->get();
         return Inertia::render('User/UserDashboard', [
             'laporans' => $laporans
         ]);
-
     })->name('user.dashboard');
 
     // MANAGEMENT LAPORAN SISI USER
@@ -132,5 +105,4 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 });
 
 /* ================= AUTHENTICATION SYSTEM ================= */
-
 require __DIR__.'/auth.php';
