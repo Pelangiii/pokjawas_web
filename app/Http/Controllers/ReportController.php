@@ -5,64 +5,56 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-// use App\Models\Laporan; // Buka ini kalau nanti udah bikin Model Laporan
+use App\Models\Laporan;
 
-class LaporanController extends Controller
+class ReportController extends Controller
 {
     /**
-     * Menampilkan halaman Verifikasi Laporan
+     * Menampilkan halaman list Verifikasi Laporan untuk Admin
      */
-    public function index()
+    public function verifikasi()
     {
-        // Sementara pakai data dummy dulu biar lu bisa liat hasilnya di React
-        // Nanti kalau udah ada tabelnya, tinggal ganti jadi Laporan::all()
-        $laporan = [
-            [
-                'id' => 1,
-                'nama' => "Pengawas Ujian MAN 7",
-                'tanggal' => "08 Mar 2026",
-                'jam' => "09:45",
-                'status' => "pending"
-            ],
-            [
-                'id' => 2,
-                'nama' => "Laporan Harian - Ahmad",
-                'tanggal' => "10 Mar 2026",
-                'jam' => "13:20",
-                'status' => "pending"
-            ],
-        ];
+        // Ambil semua data laporan dari database beserta user pembuatnya
+        $laporans = Laporan::with('user')->latest()->get();
 
+        // UBAH DI SINI: Hapus teks 'Admin/' karena filenya langsung di luar folder Pages
         return Inertia::render('VerifikasiLaporan', [
-            'laporanData' => $laporan
+            'laporans' => $laporans
         ]);
     }
 
+    /**
+     * Menampilkan detail dari salah satu laporan
+     */
     public function show($id)
-{
-    // dummy dulu
-    $laporan = [
-        'id' => $id,
-        'nama' => "Pengawas Ujian MAN 7",
-        'tanggal' => "08 Mar 2026",
-        'deskripsi' => "Lorem ipsum laporan detail lengkap",
-    ];
+    {
+        // Cari laporan berdasarkan ID beserta user pembuatnya
+        $laporan = Laporan::with('user')->findOrFail($id);
 
-    return Inertia::render('DetailLaporan', [
-        'laporan' => $laporan,
-        'user' => Auth::user()
-    ]);
-}
+        // UBAH DI SINI JUGA: Jika nanti file DetailLaporan.jsx kamu juga ada di luar folder Admin
+        return Inertia::render('DetailLaporan', [
+            'laporan' => $laporan,
+            'user' => Auth::user()
+        ]);
+    }
 
     /**
-     * Fungsi buat nerima atau nolak laporan
+     * Fungsi untuk menerima, menolak, atau meminta revisi laporan
      */
     public function updateStatus(Request $request, $id)
     {
-        // Logika update status ke database nanti di sini
-        // $laporan = Laporan::findOrFail($id);
-        // $laporan->update(['status' => $request->status]);
+        $request->validate([
+            'status' => 'required|in:diterima,revisi,ditolak',
+            'feedback' => 'nullable|string'
+        ]);
 
-        return redirect()->back()->with('message', 'Status laporan diperbarui!');
+        $laporan = Laporan::findOrFail($id);
+        
+        $laporan->update([
+            'status' => $request->status,
+            'feedback' => $request->feedback
+        ]);
+
+        return redirect()->back()->with('message', 'Status laporan berhasil diperbarui!');
     }
 }

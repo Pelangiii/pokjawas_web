@@ -19,6 +19,9 @@ export default function AdminDashboard() {
   const { props } = usePage();
   const user = props.auth?.user;
   const beritas = props.beritas || [];
+  
+  // Ambil data laporan dinamis yang dikirimkan oleh Controller backend Laravel kamu
+  const laporans = props.laporans || [];
 
   const [showNotif, setShowNotif] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -69,9 +72,14 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-center pl-20 lg:pl-8 pr-4 lg:pr-8 py-6 bg-white border-b sticky top-0 z-40 shadow-sm">
 
           {/* TITLE */}
-          <h1 className="text-2xl lg:text-3xl font-black text-gray-800 tracking-tight">
-            Dashboard
-          </h1>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-black text-gray-800 tracking-tight">
+              Dashboard
+            </h1>
+            <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">
+              Ringkasan data, informasi berita resmi, dan antrean verifikasi laporan.
+            </p>
+          </div>
 
           {/* RIGHT */}
           <div className="flex items-center gap-3 lg:gap-6">
@@ -123,7 +131,7 @@ export default function AdminDashboard() {
             <div className="relative z-10">
               <h2 className="text-2xl lg:text-3xl font-bold mb-2 text-white">
                 Selamat Datang, {user?.name || "Admin"} 👋
-              </h2>
+              </h2> 
 
               <p className="text-green-100/80 text-sm">
                 Kelola seluruh data pengawas, berita madrasah,
@@ -231,119 +239,158 @@ export default function AdminDashboard() {
               </div>
 
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 space-y-4 flex-1 flex flex-col justify-center">
+                {beritas.length > 0 ? (
+                  beritas.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-4 p-2 rounded-2xl hover:bg-gray-50 transition cursor-pointer group"
+                    >
+                      {/* GAMBAR */}
+                      <div className="w-16 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden border border-transparent group-hover:border-gray-100">
+                        {item.gambar ? (
+                          <img
+                            src={`/storage/${item.gambar}`}
+                            alt={item.judul}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-gray-400">
+                            NEWS
+                          </div>
+                        )}
+                      </div>
 
-            {beritas.length > 0 ? (
-  beritas.map((item) => (
-    <div
-      key={item.id}
-      className="flex items-center gap-4 p-2 rounded-2xl hover:bg-gray-50 transition cursor-pointer group"
-    >
-      {/* GAMBAR */}
-      <div className="w-16 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden border border-transparent group-hover:border-gray-100">
+                      {/* ISI */}
+                      <div className="flex-1">
+                        <p className="text-[10px] font-bold text-green-600 uppercase mb-0.5 tracking-tight">
+                          {item.kategori || "Informasi"}
+                        </p>
 
-        {item.gambar ? (
-          <img
-            src={`/storage/${item.gambar}`}
-            alt={item.judul}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-gray-400">
-            NEWS
-          </div>
-        )}
+                        <p className="text-sm font-bold text-gray-800 line-clamp-1 leading-tight">
+                          {item.judul}
+                        </p>
 
-      </div>
-
-      {/* ISI */}
-      <div className="flex-1">
-
-        <p className="text-[10px] font-bold text-green-600 uppercase mb-0.5 tracking-tight">
-          {item.kategori || "Informasi"}
-        </p>
-
-        <p className="text-sm font-bold text-gray-800 line-clamp-1 leading-tight">
-          {item.judul}
-        </p>
-
-        <p className="text-[10px] text-gray-400 mt-1">
-          {new Date(item.created_at).toLocaleDateString("id-ID")}
-        </p>
-
-      </div>
-    </div>
-  ))
-) : (
-  <p className="text-sm text-gray-400">
-    Belum ada berita terbaru
-  </p>
-)}
+                        <p className="text-[10px] text-gray-400 mt-1">
+                          {new Date(item.created_at).toLocaleDateString("id-ID")}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400 text-center">
+                    Belum ada berita terbaru
+                  </p>
+                )}
               </div>
             </section>
           </div>
 
-          {/* ================= VERIFIKASI ================= */}
+          {/* ================= VERIFIKASI LAPORAN ================= */}
           <section className="bg-white rounded-[2rem] p-4 lg:p-8 border border-gray-100 shadow-sm">
 
             <div className="flex justify-between items-center mb-8 px-2">
-
               <div className="flex items-center gap-2">
                 <ClipboardCheck
                   className="text-green-700"
                   size={20}
                 />
-
                 <h3 className="text-lg font-bold text-gray-800">
                   Verifikasi Laporan Terbaru
                 </h3>
               </div>
 
-              <button className="text-sm font-bold text-green-700 hover:underline">
+              <button 
+                onClick={() => router.get("/admin/verifikasilaporan")}
+                className="text-sm font-bold text-green-700 hover:underline"
+              >
                 Lihat Semua
               </button>
             </div>
 
             <div className="space-y-4">
+              {laporans.length > 0 ? (
+                laporans.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl border border-gray-50 hover:bg-gray-50 hover:border-green-200 transition group"
+                  >
+                    {/* SISI KIRI: DETAIL LAPORAN */}
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] font-black overflow-hidden">
+                        {item.image ? (
+                          <img
+                            src={`/storage/${item.image}`}
+                            alt="laporan"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          "DOC"
+                        )}
+                      </div>
 
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl border border-gray-50 hover:bg-gray-50 hover:border-green-200 transition group"
-                >
-
-                  <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] font-black">
-                      DOC
+                      <div>
+                        <p className="font-bold text-gray-800 text-base">
+                          {item.title || "Laporan Tanpa Judul"}
+                        </p>
+                        <p className="text-xs text-gray-500 mb-0.5">
+                          Oleh: {item.user?.name || "User Tidak Diketahui"}
+                        </p>
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-tight opacity-70">
+                          {new Date(item.created_at).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric"
+                          })}
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="font-bold text-gray-800 text-base">
-                        Pengawas Ujian MAN 7
-                      </p>
+                    {/* SISI KANAN: TOMBOL AKSI */}
+                    <div className="flex items-center gap-3">
+                      {/* SETUJU */}
+                      <button 
+                        onClick={() =>
+                          router.patch(`/admin/verifikasilaporan/${item.id}/status`, {
+                            status: "diterima",
+                            feedback: null,
+                          })
+                        }
+                        className="p-3 rounded-2xl bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition"
+                      >
+                        <Check size={20} strokeWidth={3} />
+                      </button>
 
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tight opacity-70">
-                        18 Mar 2026 • 09.45 WIB
-                      </p>
+                      {/* TOLAK / REVISI */}
+                      <button 
+                        onClick={() => {
+                          const feedback = prompt("Masukkan alasan revisi / penolakan:");
+                          if (feedback !== null) {
+                            router.patch(`/admin/verifikasilaporan/${item.id}/status`, {
+                              status: "revisi",
+                              feedback,
+                            });
+                          }
+                        }}
+                        className="p-3 rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition"
+                      >
+                        <X size={20} strokeWidth={3} />
+                      </button>
+
+                      {/* DETAIL */}
+                      <button 
+                        onClick={() => router.get(`/admin/verifikasilaporan/${item.id}`)}
+                        className="p-3 rounded-2xl bg-gray-50 text-gray-400 hover:bg-gray-800 hover:text-white transition"
+                      >
+                        <Eye size={20} strokeWidth={3} />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3">
-
-                    <button className="p-3 rounded-2xl bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition">
-                      <Check size={20} strokeWidth={3} />
-                    </button>
-
-                    <button className="p-3 rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition">
-                      <X size={20} strokeWidth={3} />
-                    </button>
-
-                    <button className="p-3 rounded-2xl bg-gray-50 text-gray-400 hover:bg-gray-800 hover:text-white transition">
-                      <Eye size={20} strokeWidth={3} />
-                    </button>
-
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-6">
+                  Belum ada antrean verifikasi laporan baru saat ini.
+                </p>
+              )}
             </div>
           </section>
         </div>

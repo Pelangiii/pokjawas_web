@@ -12,7 +12,18 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-/* ================= LANDING ================= */
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Di sini adalah tempat di mana Anda dapat mendaftarkan semua rute untuk
+| aplikasi Anda. Rute-rute ini dimuat oleh RouteServiceProvider dalam
+| kelompok yang berisi grup middleware "web".
+|
+*/
+
+/* ================= LANDING PAGE ================= */
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -23,11 +34,11 @@ Route::get('/', function () {
     ]);
 });
 
-/* ================= DASHBOARD & UMUM ================= */
+/* ================= DASHBOARD & UMUM (AUTH REQUIRED) ================= */
 
 Route::middleware(['auth'])->group(function () {
 
-    // BERITA
+    // BERITA MANAGEMENT
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
     Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
@@ -38,37 +49,46 @@ Route::middleware(['auth'])->group(function () {
     // USER MANAGEMENT
     Route::resource('/users', UserController::class);
 
-    // PROFILE
+    // PROFILE MANAGEMENT UMUM
     Route::get('/profile', [UserProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [UserProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [UserProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/* ================= ADMIN AREA ================= */
+/* ================= ADMIN AREA (MIDDLEWARE ADMIN) ================= */
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-    // DASHBOARD ADMIN
+    // DASHBOARD ADMIN (Mengirim Data Berita & Antrean Laporan secara Dinamis)
     Route::get('/dashboard', function () {
 
+        // 1. Ambil 5 berita terbaru
         $beritas = Berita::latest()
             ->take(5)
             ->get();
 
+        // 2. Ambil 5 laporan terbaru untuk ditaruh di antrean verifikasi dashboard
+        $laporans = Laporan::with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // 3. Render Dashboard Admin dengan mempassing kedua data tersebut
         return Inertia::render('AdminDashboard', [
-            'beritas' => $beritas
+            'beritas' => $beritas,
+            'laporans' => $laporans 
         ]);
 
     })->name('admin.dashboard');
 
-    // VERIFIKASI LAPORAN
-    Route::get('/verifikasilaporan', [UserLaporanController::class, 'verifikasi'])
+    // VERIFIKASI LAPORAN (Diurus oleh ReportController utama backend)
+    Route::get('/verifikasilaporan', [ReportController::class, 'verifikasi'])
         ->name('verifikasi.index');
 
-    Route::patch('/verifikasilaporan/{id}/status', [UserLaporanController::class, 'updateStatus'])
+    Route::patch('/verifikasilaporan/{id}/status', [ReportController::class, 'updateStatus'])
         ->name('verifikasi.update');
 
-    Route::get('/verifikasilaporan/{id}', [UserLaporanController::class, 'show'])
+    Route::get('/verifikasilaporan/{id}', [ReportController::class, 'show'])
         ->name('verifikasi.show');
 
     // PROFILE ADMIN
@@ -78,7 +98,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 });
 
-/* ================= USER AREA ================= */
+/* ================= USER AREA (PENGALIRAN KHUSUS USER/PEGAWAI) ================= */
 
 Route::middleware(['auth'])->prefix('user')->group(function () {
 
@@ -96,7 +116,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     })->name('user.dashboard');
 
-    // LAPORAN
+    // MANAGEMENT LAPORAN SISI USER
     Route::get('/laporan', [UserLaporanController::class, 'index'])->name('user.laporan');
     Route::get('/laporan/create', [UserLaporanController::class, 'create']);
     Route::post('/laporan', [UserLaporanController::class, 'store']);
@@ -105,10 +125,12 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::put('/laporan/{id}', [UserLaporanController::class, 'update']);
     Route::delete('/laporan/{id}', [UserLaporanController::class, 'destroy']);
 
-    // PROFILE USER
+    // PROFILE SISI USER
     Route::get('/profile', [UserProfileController::class, 'index'])->name('user.profile');
     Route::get('/profile/edit', [UserProfileController::class, 'edit']);
     Route::post('/profile', [UserProfileController::class, 'update']);
 });
+
+/* ================= AUTHENTICATION SYSTEM ================= */
 
 require __DIR__.'/auth.php';
