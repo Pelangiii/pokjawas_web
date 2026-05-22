@@ -101,10 +101,12 @@ export default function UserLayout({ children, title }) {
         <div>
           {/* LOGO */}
           <div className="flex items-center gap-3 mb-10">
-            <img
-              src="/logo.png"
-              className="w-10 h-10 object-contain"
-            />
+           <img
+                src="/images/pokjawas.png"
+                className="w-10 h-10 object-contain"
+                alt="Logo"
+              />
+
             <div>
               <h1 className="font-semibold text-gray-800">
                 Pokjawas Kemenag
