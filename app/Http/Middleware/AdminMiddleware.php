@@ -19,7 +19,7 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // ❌ Kalau bukan admin
+
         abort(403, 'AKSES DITOLAK - KHUSUS ADMIN');
     }
 }

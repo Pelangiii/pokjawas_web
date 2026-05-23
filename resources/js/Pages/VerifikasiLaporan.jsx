@@ -16,6 +16,7 @@ export default function VerifikasiLaporan(props) {
 
     const laporans = props?.laporans || [];
 
+
     const auth = usePage()?.props?.auth || {};
     const user = auth?.user || null;
 
@@ -50,25 +51,6 @@ export default function VerifikasiLaporan(props) {
         );
 
         setShowFilter(false);
-    };
-
-    // UPDATE STATUS
-    const handleUpdate = (id, status) => {
-        console.log("=== TOMBOL DIKLIK ===");
-        console.log("ID YANG DITERIMA:", id);
-        
-        const label = status === 'diterima' ? 'DITERIMA' : 'DITOLAK';
-
-        if (confirm(`Apakah Anda yakin ingin mengubah status laporan menjadi ${label}?`)) {
-            const targetUrl = `/admin/verifikasilaporan/${id}/status`;
-            console.log("URL TARGET ROUTER.PATCH:", targetUrl);
-
-            router.patch(
-                targetUrl,
-                { status: status },
-                { preserveScroll: true }
-            );
-        }
     };
 
     return (

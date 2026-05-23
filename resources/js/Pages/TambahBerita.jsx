@@ -43,13 +43,13 @@ export default function TambahBerita() {
     };
 
     return (
-        // Pakai bg-slate-50 buat background luar biar card putihnya "pop out"
+       
         <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8 lg:p-12 flex justify-center items-start font-sans">
             <Head title="Tambah Berita" />
             
             <div className="bg-white w-full max-w-2xl rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                 
-                {/* HEADER CARD - Konsisten sama Edit Page */}
+                
                 <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-4">
                         <Link 
@@ -67,7 +67,7 @@ export default function TambahBerita() {
 
                 <form onSubmit={submit} className="p-6 lg:p-8 space-y-6">
 
-                    {/* UPLOAD BOX - Dibuat lebih interaktif */}
+                  
                     <div className="space-y-2">
                         <label className="text-sm font-semibold text-slate-700 ml-1">Gambar Berita</label>
                         <div 

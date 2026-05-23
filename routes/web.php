@@ -3,6 +3,7 @@
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\VerifikasiLaporanController;
 use App\Http\Controllers\User\LaporanController as UserLaporanController;
 use App\Http\Controllers\User\ProfileController as UserProfileController;
 use App\Models\Laporan;
@@ -66,7 +67,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/verifikasilaporan', [ReportController::class, 'verifikasi'])
         ->name('verifikasi.index');
 
-    Route::patch('/verifikasilaporan/{id}/status', [ReportController::class, 'updateStatus'])
+    // GUA UBAH DI SINI: Ditambahkan parameter {id} supaya cocok dengan request dari frontend
+    Route::patch('/verifikasilaporan/{id}', [ReportController::class, 'updateStatus'])
         ->name('verifikasi.update');
 
     Route::get('/verifikasilaporan/{id}', [ReportController::class, 'show'])
@@ -77,6 +79,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         return Inertia::render('AdminProfile');
     })->name('admin.profile');
 });
+
 
 /* ================= USER AREA ================= */
 Route::middleware(['auth'])->prefix('user')->group(function () {

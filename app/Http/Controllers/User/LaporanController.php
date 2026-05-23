@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\User;
 
-
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use Inertia\Inertia;
@@ -14,7 +13,6 @@ use App\Mail\LaporanMasukMail;
 
 class LaporanController extends Controller
 {
-    // 🔥 LIST LAPORAN USER
     public function index()
     {
         $laporans = Laporan::with('user')
@@ -27,13 +25,11 @@ class LaporanController extends Controller
         ]);
     }
 
-    // 🔥 HALAMAN CREATE
     public function create()
     {
         return Inertia::render('User/Laporan/Create');
     }
 
-    // 🔥 STORE LAPORAN + EMAIL ADMIN
     public function store(Request $request)
     {
         $request->validate([
@@ -45,43 +41,37 @@ class LaporanController extends Controller
 
         $imagePath = null;
 
-        // 🔥 HANDLE IMAGE
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('laporan', 'public');
         }
 
-        // 🔥 CREATE LAPORAN
         $laporan = Laporan::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,
-
-            // default status
             'status' => $request->status ?? 'pending',
-
-            // feedback awal kosong
             'feedback' => null
         ]);
 
-        // 🔥 KIRIM EMAIL KE ADMIN
-        Mail::to('admin@gmail.com')
-            ->send(new LaporanMasukMail($laporan));
+        Mail::to('admin@gmail.com')->send(new LaporanMasukMail($laporan));
 
         return redirect('/user/laporan');
     }
 
-    // 🔥 DETAIL LAPORAN
     public function show($id)
     {
         $laporan = Laporan::with('user')->findOrFail($id);
+
+        if ($laporan->image) {
+            $laporan->image = asset('storage/' . $laporan->image);
+        }
 
         return Inertia::render('User/Laporan/Show', [
             'laporan' => $laporan
         ]);
     }
 
-    // 🔥 EDIT PAGE
     public function edit($id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -91,7 +81,6 @@ class LaporanController extends Controller
         ]);
     }
 
-    // 🔥 UPDATE USER
     public function update(Request $request, $id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -103,22 +92,15 @@ class LaporanController extends Controller
             'status' => 'nullable|string'
         ]);
 
-        // 🔥 HANDLE IMAGE
         if ($request->hasFile('image')) {
-
-            // hapus image lama
             if ($laporan->image) {
                 Storage::disk('public')->delete($laporan->image);
             }
-
-            // upload image baru
             $laporan->image = $request->file('image')->store('laporan', 'public');
         }
 
-        // 🔥 STATUS LOGIC
         $newStatus = $request->status ?? $laporan->status;
 
-        // kalau sebelumnya revisi
         if ($laporan->status === 'revisi') {
             $newStatus = 'proses';
         }
@@ -127,50 +109,49 @@ class LaporanController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'status' => $newStatus,
-
-            // reset feedback setelah revisi
             'feedback' => null
         ]);
 
         return redirect('/user/laporan');
     }
 
-    // 🔥 HALAMAN VERIFIKASI ADMIN
     public function verifikasi()
     {
         $laporans = Laporan::with('user')
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($laporan) {
+                if ($laporan->image) {
+                    $laporan->image = asset('storage/' . $laporan->image);
+                }
+                return $laporan;
+            });
 
         return Inertia::render('Verifikasi/Index', [
             'laporans' => $laporans
         ]);
     }
 
-    // 🔥 ADMIN UPDATE STATUS
-    public function updateStatus(Request $request, $id)
+    // FIX: Fungsi update status yang dipanggil oleh Admin dari React
+    public function updateStatus(Request $request)
     {
         $request->validate([
-            'status' => 'required|string',
-            'feedback' => 'nullable|string'
+            'id' => 'required|exists:laporans,id',
+            'status' => 'required|in:revisi,diterima',
         ]);
 
-        $laporan = Laporan::findOrFail($id);
+        $laporan = Laporan::findOrFail($request->id);
+        $laporan->status = $request->status;
+        $laporan->save(); // Memastikan status tersimpan ke database
 
-        $laporan->update([
-            'status' => $request->status,
-            'feedback' => $request->feedback,
-        ]);
-
-        return back();
+        // Mental kembali ke halaman list verifikasi laporan
+        return redirect('/admin/verifikasilaporan')->with('success', 'Status laporan berhasil diperbarui!');
     }
 
-    // 🔥 DELETE LAPORAN
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);
 
-        // hapus image
         if ($laporan->image) {
             Storage::disk('public')->delete($laporan->image);
         }
@@ -179,4 +160,4 @@ class LaporanController extends Controller
 
         return redirect('/user/laporan');
     }
-};
+}

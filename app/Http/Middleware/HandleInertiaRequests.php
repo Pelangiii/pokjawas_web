@@ -7,6 +7,7 @@ use Inertia\Middleware;
 use App\Models\Laporan;
 use Illuminate\Support\Facades\Auth;
 
+
 class HandleInertiaRequests extends Middleware
 {
     protected $rootView = 'app';
