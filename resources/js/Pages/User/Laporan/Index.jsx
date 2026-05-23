@@ -3,7 +3,7 @@ import { router, usePage } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import Swal from "sweetalert2";
 
-// 🔥 ICON
+
 import {
   Search,
   Plus,
@@ -22,7 +22,7 @@ export default function Index({ laporans = [] }) {
   const [filter, setFilter] = useState("terbaru");
   const [search, setSearch] = useState("");
 
-  // 🔥 FILTER + SEARCH + SORT
+  
   const filteredLaporans = [...laporans]
     .filter((item) =>
       item.title?.toLowerCase().includes(search.toLowerCase())
@@ -44,7 +44,7 @@ export default function Index({ laporans = [] }) {
   return (
     <UserLayout title="Laporan">
 
-      {/* 🔥 SEARCH + ACTION */}
+      {/* SEARCH + ACTION */}
       <div className="flex justify-between items-center mb-8">
 
         {/* SEARCH */}
@@ -119,7 +119,7 @@ export default function Index({ laporans = [] }) {
         </div>
       </div>
 
-      {/* 🔥 LIST */}
+      {/* LIST */}
       <div className="space-y-4">
 
         {filteredLaporans.length === 0 ? (
