@@ -334,8 +334,8 @@ export default function Welcome({ auth }) {
                         <div className="text-center mb-12 relative inline-block w-full">
                             <h2 className="text-4xl font-bold text-gray-800 relative inline-block">
                                 Sambutan Ketua Pokjawas
-                                <span className="absolute -left-10 top-0 w-6 h-6 border-l-4 border-t-4 border-green-800"></span>
-                                <span className="absolute -right-10 bottom-0 w-6 h-6 border-r-4 border-b-4 border-green-800"></span>
+                                <span className="absolute -left-2 top-0 w-6 h-6 border-l-4 border-t-4 border-green-800"></span>
+                                <span className="absolute -right-2 bottom-0 w-6 h-6 border-r-4 border-b-4 border-green-800"></span>
                             </h2>
                         </div>
 
