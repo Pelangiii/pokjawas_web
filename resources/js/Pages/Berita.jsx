@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
+=======
+import { useState, useEffect, useRef } from 'react';
+>>>>>>> feature-frontend
 import Sidebar from '@/Components/Sidebar';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
@@ -24,7 +28,18 @@ export default function Berita({ berita = [] }) {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState(null);
 
+<<<<<<< HEAD
   useEffect(() => {
+=======
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+>>>>>>> feature-frontend
     const delay = setTimeout(() => {
       router.get(
         '/berita',
@@ -105,7 +120,10 @@ export default function Berita({ berita = [] }) {
             <div className="flex items-center gap-2 lg:gap-4">
               <button className="relative p-2 text-slate-400 hover:text-green-600 transition-colors">
                 <Bell size={20} />
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
               </button>
 
@@ -116,7 +134,10 @@ export default function Berita({ berita = [] }) {
                   <p className="text-xs font-bold text-slate-700 leading-none">
                     {user?.name}
                   </p>
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
                   <p className="text-[9px] text-slate-400 uppercase tracking-tighter mt-1">
                     Admin
                   </p>
@@ -139,7 +160,10 @@ export default function Berita({ berita = [] }) {
                 <p className="text-green-100 text-xs lg:text-sm font-medium">
                   Total Berita Dipublikasi
                 </p>
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
                 <p className="text-2xl lg:text-4xl font-bold mt-1">
                   {berita.length}
                 </p>
@@ -149,7 +173,10 @@ export default function Berita({ berita = [] }) {
                 <Newspaper size={28} className="text-white" />
               </div>
             </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
             <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
           </div>
 
@@ -160,7 +187,10 @@ export default function Berita({ berita = [] }) {
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                 size={18}
               />
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
               <input
                 type="text"
                 value={search}
@@ -229,7 +259,10 @@ export default function Berita({ berita = [] }) {
                 size={48}
                 className="mx-auto text-slate-300 mb-3"
               />
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature-frontend
               <p className="text-slate-500 font-medium">
                 Belum ada data berita
               </p>
@@ -246,6 +279,10 @@ export default function Berita({ berita = [] }) {
                       <img
                         src={`/storage/${item.gambar}`}
                         className="w-full h-full object-cover"
+<<<<<<< HEAD
+=======
+                        alt={item.judul}
+>>>>>>> feature-frontend
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-300">

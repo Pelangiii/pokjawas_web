@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.clip-visi {
+    clip-path: polygon(
+        60% 100%,   /* kiri bawah (lebih panjang) */
+        100% 100%,  /* kanan bawah */
+        100% 0,     /* kanan atas */
+        70% 0       /* kiri atas (lebih pendek) */
+    );
+    border-bottom-right-radius: 1.5rem; /* ngikutin rounded-3xl */
+}
+
+.clip-misi {
+    clip-path: polygon(
+        30% 100%,   /* kiri bawah (lebih panjang) */
+        100% 100%,  /* kanan bawah */
+        100% 0,     /* kanan atas */
+        40% 0       /* kiri atas (lebih pendek) */
+    );
+    border-bottom-right-radius: 1.5rem;
+}
+
+/* resources/css/app.css */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left { transform: translateX(-40px); }
+.reveal-right { transform: translateX(40px); }
+
+

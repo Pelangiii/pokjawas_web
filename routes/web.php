@@ -12,49 +12,59 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+/* ================= 1. LANDING PAGE & HALAMAN PUBLIK (FRONTEND) ================= */
 
-/* ================= LANDING PAGE ================= */
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    // Mengambil 3 berita terbaru dari database untuk ditampilkan di Landing Page secara otomatis
+    $beritas = [];
+    if (class_exists(Berita::class)) {
+        $beritas = Berita::latest()->take(3)->get();
+    }
+
+    return Inertia::render('Landing_Page', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'beritas' => $beritas, // Mengalirkan data asli dari database ke landing page React
     ]);
-});
+})->name('home');
 
-/* ================= DASHBOARD & UMUM (AUTH REQUIRED) ================= */
+// Jalur navigasi menu publik frontend
+Route::get('/struktur', function () { return Inertia::render('Struktur_Anggota'); })->name('struktur');
+Route::get('/berita', function () { return Inertia::render('Berita/Berita_Lain'); })->name('berita');
+Route::get('/berita/{id}', function ($id) { return Inertia::render('Berita/Detail_Berita', ['id' => $id]); })->name('berita.detail');
+Route::get('/kegiatan', function () { return Inertia::render('Kegiatan/Kegiatan_Lain'); })->name('kegiatan');
+Route::get('/kegiatan/{id}', function ($id) { return Inertia::render('Kegiatan/Detail_Kegiatan', ['id' => $id]); })->name('kegiatan.detail');
+
+/* ================= 2. DASHBOARD & AUTH UMUM (BACKEND) ================= */
+
 Route::middleware(['auth'])->group(function () {
-
-    // BERITA MANAGEMENT
-    Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+    // Manajemen Berita (Bisa diakses user terautentikasi yang berhak)
+    Route::get('/berita-admin', [BeritaController::class, 'index'])->name('berita.index');
     Route::get('/berita/tambah', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
     Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
     Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
-    // USER MANAGEMENT
+    // Manajemen Pengguna (User Management)
     Route::resource('/users', UserController::class);
 
-    // PROFILE MANAGEMENT UMUM
+    // Manajemen Profil Standar Utama
     Route::get('/profile', [UserProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [UserProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [UserProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/* ================= ADMIN AREA (MIDDLEWARE ADMIN) ================= */
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+/* ================= 3. ADMIN AREA (BACKEND) ================= */
 
-    // DASHBOARD ADMIN
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+
+    // Dashboard Admin Utama (Menampilkan statistik berita & laporan terbaru)
     Route::get('/dashboard', function () {
-        $beritas = Berita::latest()->take(5)->get();
-        $laporans = Laporan::with('user')->latest()->take(5)->get();
+        $beritas = class_exists(Berita::class) ? Berita::latest()->take(5)->get() : [];
+        $laporans = class_exists(Laporan::class) ? Laporan::with('user')->latest()->take(5)->get() : [];
 
         return Inertia::render('AdminDashboard', [
             'beritas' => $beritas,
@@ -62,34 +72,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         ]);
     })->name('admin.dashboard');
 
-    // VERIFIKASI LAPORAN (Urusan Utama Status Laporan)
-    Route::get('/verifikasilaporan', [ReportController::class, 'verifikasi'])
-        ->name('verifikasi.index');
+    // Sistem Verifikasi Laporan Masuk oleh Admin
+    Route::get('/verifikasilaporan', [ReportController::class, 'verifikasi'])->name('verifikasi.index');
+    Route::patch('/verifikasilaporan/{id}/status', [ReportController::class, 'updateStatus'])->name('verifikasi.update');
+    Route::get('/verifikasilaporan/{id}', [ReportController::class, 'show'])->name('verifikasi.show');
 
-    Route::patch('/verifikasilaporan/{id}/status', [ReportController::class, 'updateStatus'])
-        ->name('verifikasi.update');
-
-    Route::get('/verifikasilaporan/{id}', [ReportController::class, 'show'])
-        ->name('verifikasi.show');
-
-    // PROFILE ADMIN
-    Route::get('/profile', function () {
-        return Inertia::render('AdminProfile');
-    })->name('admin.profile');
+    // Halaman Profil Admin
+    Route::get('/profile', function () { return Inertia::render('AdminProfile'); })->name('admin.profile');
 });
 
-/* ================= USER AREA ================= */
+/* ================= 4. USER AREA (BACKEND) ================= */
+
 Route::middleware(['auth'])->prefix('user')->group(function () {
 
-    // DASHBOARD USER
+    // Dashboard Pengguna Biasa/Anggota
     Route::get('/dashboard', function () {
-        $laporans = Laporan::where('user_id', Auth::id())->latest()->take(5)->get();
+        $laporans = class_exists(Laporan::class) ? Laporan::where('user_id', Auth::id())->latest()->take(5)->get() : [];
         return Inertia::render('User/UserDashboard', [
             'laporans' => $laporans
         ]);
     })->name('user.dashboard');
 
-    // MANAGEMENT LAPORAN SISI USER
+    // Fitur CRUD Laporan dari Sisi User
     Route::get('/laporan', [UserLaporanController::class, 'index'])->name('user.laporan');
     Route::get('/laporan/create', [UserLaporanController::class, 'create']);
     Route::post('/laporan', [UserLaporanController::class, 'store']);
@@ -98,11 +102,11 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::put('/laporan/{id}', [UserLaporanController::class, 'update']);
     Route::delete('/laporan/{id}', [UserLaporanController::class, 'destroy']);
 
-    // PROFILE SISI USER
+    // Profil Khusus Sisi User
     Route::get('/profile', [UserProfileController::class, 'index'])->name('user.profile');
     Route::get('/profile/edit', [UserProfileController::class, 'edit']);
     Route::post('/profile', [UserProfileController::class, 'update']);
 });
 
-/* ================= AUTHENTICATION SYSTEM ================= */
+/* ================= 5. AUTHENTICATION SYSTEM ================= */
 require __DIR__.'/auth.php';
