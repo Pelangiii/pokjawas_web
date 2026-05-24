@@ -39,10 +39,7 @@ export default function Detail({ id }) {
                     {/* CONTENT */}
                     <div className="text-gray-700 leading-relaxed space-y-4">
                         <p>
-                            Ini adalah halaman detail berita. Nanti kamu bisa isi dari database.
-                        </p>
-                        <p>
-                            Konten berita lengkap akan tampil di sini, termasuk gambar, teks, dll.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                         </p>
                     </div>
 

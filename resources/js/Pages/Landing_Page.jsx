@@ -8,23 +8,23 @@ export default function Welcome({ auth }) {
     const featuredNews = [
         {
             id: 1,
-            title: "Lorem Ipsum dolor sit amet met pojok lawas yes yes 676767",
+            title: "Pokjawas Madrasah Gelar Rapat Koordinasi Guna Tingkatkan Mutu Pendidikan",
             date: "Kamis, 5 Maret 2026",
             category: "Nasional",
             image: "/images/img_hero_1.png",
         },
         {
             id: 2,
-            title: "Berita Kedua biar keliatan slider jalan",
+            title: "Pokjawas Lakukan Monitoring dan Evaluasi Pelaksanaan Ujian Akhir Madrasah",
             date: "Jumat, 6 Maret 2026",
-            category: "Internasional",
+            category: "Nasional",
             image: "/images/img_hero_2.png",
         },
         {
             id: 3,
-            title: "Berita Ketiga auto geser mantap",
+            title: "Pokjawas Kemenag Sosialisasikan Regulasi Terbaru Mengenai Beban Kerja Guru",
             date: "Sabtu, 7 Maret 2026",
-            category: "Pers Rilis",
+            category: "Nasional",
             image: "/images/img_hero_3.png",
         },
     ];
@@ -600,13 +600,11 @@ export default function Welcome({ auth }) {
                                             {/* TEXT */}
                                             <div className="flex-1">
                                                 <p className="text-green-600 text-sm font-medium">
-                                                    Pers Rilis
+                                                    Madrasah
                                                 </p>
 
                                                 <h4 className="text-gray-800 font-semibold leading-snug group-hover:text-green-700 transition">
-                                                    Kemenag: Menag Ajak Umat
-                                                    Islam Lampaui Standar
-                                                    Minimal Zakat
+                                                    Pokjawas Dorong Digitalisasi Madrasah Melalui Pelatihan Pembuatan Media Pembelajaran
                                                 </h4>
 
                                                 <p className="text-sm text-gray-400 mt-1">
@@ -686,7 +684,7 @@ export default function Welcome({ auth }) {
                                                 "Pembinaan dan Penilaian Kepala Madrasah 2026"}
                                             {item === 2 &&
                                                 "Sosialisasi kurikulum berbasis cinta"}
-                                            {item === 3 && "Judul Kegiatan"}
+                                            {item === 3 && "Pokjawas Berkomitmen Bawa Perubahan Positif bagi Madrasah"}
                                         </h3>
 
                                         <p className="text-gray-600 text-sm">

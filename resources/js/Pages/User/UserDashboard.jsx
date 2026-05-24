@@ -7,7 +7,6 @@ export default function UserDashboard({ laporans = [] }) {
   const { props } = usePage();
   const user = props.auth?.user;
 
-  // 🔥 STATUS COLOR (SUDAH FIX ALL CASE)
   const getStatusStyle = (status) => {
     const s = (status || "").toLowerCase();
 
@@ -16,10 +15,9 @@ export default function UserDashboard({ laporans = [] }) {
     if (s === "proses") return "bg-blue-700 text-white";
     if (s === "draft") return "bg-yellow-400 text-white";
 
-    return "bg-gray-400 text-white"; // fallback
+    return "bg-gray-400 text-white";
   };
 
-  // 🔥 FORMAT TEXT BIAR RAPI
   const formatStatus = (status) => {
     if (!status) return "Proses";
 
@@ -132,11 +130,8 @@ export default function UserDashboard({ laporans = [] }) {
               );
             })
           )}
-
         </div>
-
       </div>
-
     </UserLayout>
   );
 }
