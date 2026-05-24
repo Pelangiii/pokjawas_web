@@ -1,58 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Pokjawas Web - Sistem Monitoring Kinerja Guru
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![GitHub License](https://img.shields.io/github/license/Pelangiii/pokjawas_web?style=flat-square)](LICENSE)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/Pelangiii/pokjawas_web?style=flat-square)](https://github.com/Pelangiii/pokjawas_web/pulls)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-blue?style=flat-square)](https://nodejs.org)
 
-## About Laravel
+**Pokjawas Web** adalah platform berbasis web dan dashboard interaktif yang dirancang khusus untuk Kelompok Kerja Pengawas (Pokjawas) Sekolah. Sistem ini berfungsi untuk mempermudah pengawas dalam melakukan monitoring, evaluasi, serta rekapitulasi capaian kinerja guru secara digital, transparan, dan terintegrasi.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Sistem dikembangkan dengan arsitektur monorepo / pemisahan branch yang jelas untuk fungsionalitas backend dan frontend:
 
-## Learning Laravel
+- **Autentikasi & Manajemen Pengguna:** Manajemen hak akses berlapis untuk Admin, Pengawas, dan Guru.
+- **Dashboard Pemantauan Real-time:** Grafik dan visualisasi metrik capaian kinerja serta status pengisian instrumen oleh guru.
+- **Manajemen Dokumen & Instrumen Evaluasi:** Proses unggah berkas, pengisian form penilaian kinerja, dan validasi dokumen oleh pengawas.
+- **Pelaporan & Rekapitulasi Otomatis:** Sistem rekap data performa yang siap dievaluasi kapan saja untuk mendukung pelaporan kerja organisasi.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Arsitektur & Teknologi
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Sistem ini dikembangkan menggunakan ekosistem JavaScript modern dengan arsitektur yang modular:
 
-## Agentic Development
+### Frontend (`feature-frontend`)
+- **Runtime & Library:** Node.js, React.js (atau Vue.js / framework JS relevan)
+- **Styling:** Tailwind CSS / Bootstrap (untuk tampilan dashboard yang responsif dan modern)
+- **State Management & Routing:** Navigasi client-side terintegrasi untuk kelancaran dashboard.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Backend (`feature-backend`)
+- **Runtime Environment:** Node.js
+- **Framework:** Express.js / Hapi Framework
+- **Fitur Backend:** Autentikasi (JWT / Session), Validasi Request, dan integrasi database.
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
-```
+## 📂 Struktur Folder Utama
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+```text
+pokjawas_web/
+├── config/             # Konfigurasi database & environment variables
+├── controllers/        # Logika bisnis dan controller utama backend
+├── models/             # Skema database / query data
+├── routes/             # Definisi endpoint RESTful API
+├── src/ / views/       # Komponen interface (UI) dan layout frontend
+├── .env.example        # Contoh template environment variable
+└── README.md           # Dokumentasi proyek
 
-## Contributing
+ Alur Branching (Git Workflow)
+Proyek ini menggunakan strategi percabangan (feature-branching) untuk kolaborasi tim yang rapi:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+main / utama : Branch produksi yang berisi kode stabil dan siap pakai.
 
-## Code of Conduct
+feature-backend : Branch khusus untuk pengembangan, database, bisnis logik, dan autentikasi.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+feature-frontend : Branch khusus untuk implementasi user interface, komponen dashboard, dan integrasi (slicing UI).
 
-## Security Vulnerabilities
+Setiap fitur baru wajib melalui proses Pull Request (PR) ke branch main setelah divalidasi oleh kolaborator tim.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+💻 Panduan Instalasi Lokal
+Ikuti langkah-langkah berikut untuk menjalankan proyek di lingkungan pengembangan lokal Anda:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Prasyarat
+Pastikan Anda sudah menginstal Node.js (versi 18 atau ke atas) dan npm / yarn.
+
+Git terinstal di perangkat Anda (khusus pengguna macOS, pastikan konfigurasi permission sudah sesuai).
+
+Langkah-Langkah
+Clone Repositori:
+
+Bash
+git clone [https://github.com/Pelangiii/pokjawas_web.git](https://github.com/Pelangiii/pokjawas_web.git)
+cd pokjawas_web
+Pindah ke Branch yang Ingin Dijalankan:
+
+Untuk melihat/menjalankan kode Backend:
+
+Bash
+git checkout feature-backend
+Untuk melihat/menjalankan kode Frontend:
+
+Bash
+git checkout feature-frontend
+Instalasi Dependencies:
+
+Bash
+npm install
+Konfigurasi Environment (.env):
+Duplikat file .env.example menjadi .env lalu sesuaikan konfigurasi port, database, atau kredensial API lainnya.
+
+Plaintext
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=password_kamu
+JWT_SECRET=rahasia_negara
+Jalankan Aplikasi dalam Mode Pengembangan:
+
+Bash
+npm run dev
+# atau jika menggunakan script start standar:
+npm start
+👥 Tim Pengembang (Contributors)
+Proyek ini dikembangkan dalam rangka tugas kolaborasi tim. Berikut adalah anggota tim yang berkontribusi:
+
+Azwa Khalisa Melantika - azwakm616@gmail.com - Fullstack Developer / Project Manager / Scrumaster
+
+Dhia Nufah - dhianufah08@gmail.com - Fullstack Developer / Technical Writer
+
+Pelangi Pagi - pelangi.pagi7810@gmail.com - Fullstack Developer / System Analyst
+
+Chalila Nurdiana - fichalilanurdiana@gmail.com - Frontend Developer / UI/UX Designer
+
+Hilwa Ilham - hilwaaillham@gmail.com - Frontend Developer / UI/UX Designer
+
+📄 Lisensi
+Hak Cipta © 2026 - Dikembangkan oleh Tim Pojokers.
+All Rights Reserved.
+
+
+---
+
+### Tips Penggunaan : 
+Jika kelompokmu memakai package manager atau framework spesifik (misal: React Vite, Next.js, Express, atau Hapi), tinggal sesuaikan saja di bagian **🛠️ Arsitektur & Teknologi** dan perintah jalannya di bagian **💻 Panduan Instalasi Lokal** (`npm run dev` atau `node server.js`). 
+
+Tinggal simpan file ini, maka halaman GitHub kamu bakal langsung kelihatan keren dan rapi! Ada bagian yang mau kamu sesuaikan lagi?
