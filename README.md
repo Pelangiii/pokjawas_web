@@ -122,7 +122,7 @@ All Rights Reserved.
 
 ---
 
-### Tips Penggunaan:
+### Tips Penggunaan : 
 Jika kelompokmu memakai package manager atau framework spesifik (misal: React Vite, Next.js, Express, atau Hapi), tinggal sesuaikan saja di bagian **🛠️ Arsitektur & Teknologi** dan perintah jalannya di bagian **💻 Panduan Instalasi Lokal** (`npm run dev` atau `node server.js`). 
 
 Tinggal simpan file ini, maka halaman GitHub kamu bakal langsung kelihatan keren dan rapi! Ada bagian yang mau kamu sesuaikan lagi?
