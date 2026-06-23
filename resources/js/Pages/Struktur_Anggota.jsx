@@ -4,77 +4,23 @@ import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/Components/icon";
 
 export default function Profil() {
     const [isOpen, setIsOpen] = useState(false);
-    const [current, setCurrent] = useState(0);
-    const [open, setOpen] = useState(null);
 
-    const toggle = (id) => {
-        setOpen(open === id ? null : id);
+    // State dropdown koordinasi struktur baru (true berarti default-nya terbuka)
+    const [openSections, setOpenSections] = useState({
+        tk_ra_sd_mi: false,
+        smp_mts: false,
+        sma_smk_ma_mak: false,
+        kompetensi: false,
+        laporan_evaluasi: false,
+        kesejahteraan_sosial: false,
+    });
+
+    const toggleSection = (section) => {
+        setOpenSections((prev) => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
     };
-
-    const dropdownData = [
-        {
-            id: 1,
-            title: "KORD. BID. TK / RA, SD / MI",
-            content: [
-                "Drs Zaenas Solihin",
-                "Yahya, S.Pd.I",
-                "H. Misbakhul Munir, M.Pd",
-            ],
-        },
-        {
-            id: 2,
-            title: "KORD. BID. SMP / MTs",
-            content: [
-                "Sarun, S.Ag, MM",
-                "Dr. Wuliyono, M.Si",
-                "Dr. Isep Rusmawan, MM",
-            ],
-        },
-        {
-            id: 3,
-            title: "KORD. BID. SMA, SMK/MA, MAK",
-            content: [
-                "Drs. H. Martono",
-                "H. Jaenudin, S.Pd, MM",
-                "H. Didin Hadiat, M.Pd",
-            ],
-        },
-        {
-            id: 4,
-            title: "KORD. PENINGKATAN KOMPETENSI",
-            content: [
-                "Dr. H. Yaya Suhaya, S.Ag. M.Pd.",
-                "Drs. Yuhadi, M.Pd.",
-                "H. Subandi, M.Pd.",
-                "H. Taufik Rahman, MA.",
-                "Idris, S.Ag. M.Pd.",
-            ],
-        },
-        {
-            id: 5,
-            title: "KORD. PROG. LAPORAN & EVALUASI",
-            content: [
-                "Dr. H. Yaya Suhaya, S.Ag. M.Pd.",
-                "Drs. Yuhadi, M.Pd.",
-                "H. Subandi, M.Pd.",
-                "H. Taufik Rahman, MA.",
-                "Idris, S.Ag. M.Pd.",
-            ],
-        },
-        {
-            id: 6,
-            title: "KORD. BID. KESEJAHTERAAN SOSIAL & HUBUNGAN MASYARAKAT",
-            content: [
-                "Muhammad Nurdin, S.Ag. M.Pd.",
-                "H. Dayat Dania, S.Pd.I. MA.",
-                "Atmadi, S.Pd.I. M.Si.",
-                "Inzal Zulkarnaen, S.Pd. MM.",
-                "Vienta Heryani, M.Pd.",
-                "H. Abduh Basyith, S.Pd.I",
-                "Drs. Moh Fajeri, M.Si.",
-            ],
-        },
-    ];
 
     useEffect(() => {
         const elements = document.querySelectorAll(".reveal");
@@ -94,6 +40,49 @@ export default function Profil() {
 
         return () => observer.disconnect();
     }, []);
+
+    // Sub-Komponen Card Anggota - LEBIH LEBAR & TEKS OTOMATIS WRAP (GA KEPOTONG)
+    const MemberCard = ({ name, title, imageUrl, isCore = false }) => (
+        <div
+            className={`flex flex-col items-center flex-1 min-w-[140px] ${
+                isCore ? "max-w-[180px]" : "max-w-[210px]"
+            }`}
+        >
+            {title && (
+                <span className="text-green-800 font-semibold text-sm mb-2">
+                    {title}
+                </span>
+            )}
+
+            {/* Box Foto */}
+            <div
+                className={`w-24 h-28 bg-gray-200 shadow-md flex items-center justify-center overflow-hidden mb-2 rounded-md ${
+                    isCore
+                        ? "border-2 border-gray-300"
+                        : "border border-green-700"
+                }`}
+            >
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={name}
+                        className="w-full h-full object-cover object-center block"
+                    />
+                ) : (
+                    <div className="text-[10px] text-gray-400 font-medium text-center p-2">
+                        Belum Ada Foto
+                    </div>
+                )}
+            </div>
+
+            {/* Label Nama (Lebih lebar, teks wrap ke bawah jika panjang, tidak truncate) */}
+            <div className="w-full border border-green-800 rounded-2xl px-3 py-1.5 text-center bg-white shadow-sm min-h-[40px] flex items-center justify-center">
+                <p className="text-[11px] md:text-xs font-semibold text-green-950 whitespace-normal leading-tight">
+                    {name}
+                </p>
+            </div>
+        </div>
+    );
 
     return (
         <>
@@ -129,11 +118,12 @@ export default function Profil() {
                             <img
                                 src="/images/logo_kemenag.png"
                                 className="w-10 h-10 object-contain"
+                                alt="Logo Kemenag"
                             />
                             <div className="w-px h-8 bg-gray-300 hidden md:block"></div>
                         </div>
 
-                        {/* DESKTOP NAV - Hidden on Mobile */}
+                        {/* DESKTOP NAV */}
                         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 lg:gap-20 text-gray-600 font-semibold">
                             <Link
                                 href="/"
@@ -161,32 +151,14 @@ export default function Profil() {
                             </Link>
                         </div>
 
-                        {/* MOBILE CONTROLS (SVG Manual) */}
+                        {/* MOBILE CONTROLS */}
                         <div className="flex items-center gap-4">
-                            {/* Desktop Login Button */}
                             <Link
                                 href={route("login")}
                                 className="hidden md:block bg-green-800 text-white px-6 py-2 rounded-lg font-semibold"
                             >
                                 Login
                             </Link>
-
-                            {/* Mobile Profile Icon (SVG) */}
-                            <Link
-                                href="/login"
-                                className="md:hidden text-green-800"
-                            >
-                                <svg
-                                    width="32"
-                                    height="32"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                >
-                                    <path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 14c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
-                                </svg>
-                            </Link>
-
-                            {/* Hamburger Button (SVG) */}
                             <button
                                 onClick={() => setIsOpen(true)}
                                 className="md:hidden text-green-800"
@@ -208,111 +180,12 @@ export default function Profil() {
                             </button>
                         </div>
                     </div>
-
-                    {/* MOBILE SIDEBAR OVERLAY */}
-                    <div
-                        className={`fixed inset-0 bg-black/50 z-[60] transition-opacity duration-300 md:hidden ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                        onClick={() => setIsOpen(false)}
-                    />
-
-                    {/* MOBILE SIDEBAR MENU */}
-                    <div
-                        className={`fixed top-0 right-0 h-full w-[80%] max-w-sm bg-white z-[70] transform transition-transform duration-300 ease-in-out md:hidden
-                                        ${isOpen ? "translate-x-0" : "translate-x-full"}`}
-                    >
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-xl font-bold text-gray-800 font-jakarta">
-                                    Menu
-                                </h3>
-                                {/* Close Button (SVG X) */}
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="text-green-800"
-                                >
-                                    <svg
-                                        width="32"
-                                        height="32"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <line
-                                            x1="18"
-                                            y1="6"
-                                            x2="6"
-                                            y2="18"
-                                        ></line>
-                                        <line
-                                            x1="6"
-                                            y1="6"
-                                            x2="18"
-                                            y2="18"
-                                        ></line>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <nav className="flex flex-col space-y-4 border-b pb-6 font-jakarta">
-                                <Link href="/" className="text-gray-700 p-3">
-                                    Beranda
-                                </Link>
-                                <Link
-                                    href="/struktur"
-                                    className="text-green-600 font-bold bg-green-50 p-3 rounded-lg"
-                                >
-                                    Profil
-                                </Link>
-                                <Link
-                                    href="/berita"
-                                    className="text-gray-700 p-3"
-                                >
-                                    Berita
-                                </Link>
-                                <Link
-                                    href="/kegiatan"
-                                    className="text-gray-700 p-3"
-                                >
-                                    Kegiatan
-                                </Link>
-                                <Link
-                                    href="/kontak"
-                                    className="text-gray-700 p-3"
-                                >
-                                    Kontak Kami
-                                </Link>
-                            </nav>
-
-                            <div className="mt-8 px-3">
-                                <p className="font-bold text-gray-800 mb-6 font-jakarta">
-                                    Media Sosial
-                                </p>
-                                <div className="flex gap-6">
-                                    <div className="flex-1 flex justify-center gap-20 lg:gap-40">
-                                        <a href="#" className="group">
-                                            <InstagramIcon className="w-5 h-5 text-green-600 group-hover:text-yellow-400 transition duration-300" />
-                                        </a>
-                                        <a href="#" className="group">
-                                            <YoutubeIcon className="w-5 h-5 text-green-600 group-hover:text-yellow-400 transition duration-300" />
-                                        </a>
-                                        <a href="#" className="group">
-                                            <FacebookIcon className="w-5 h-5 text-green-600 group-hover:text-yellow-400 transition duration-300" />
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </nav>
                 {/* --- END NAVBAR --- */}
 
-                {/* PROFIL */}
+                {/* PROFIL ABOUT */}
                 <section className="py-16">
                     <div className="max-w-7xl mx-auto px-6">
-                        {/* HEADER */}
                         <div className="text-center mb-12 relative">
                             <h2 className="text-4xl font-bold inline-block relative">
                                 Profil
@@ -321,18 +194,17 @@ export default function Profil() {
                             </h2>
                         </div>
 
-                        {/* CARD */}
                         <div className="bg-white rounded-3xl p-10 max-w-5xl mx-auto shadow-md reveal">
                             <h3 className="text-3xl font-semibold text-center mb-10">
                                 Tentang Pokjawas
                             </h3>
-
                             <img
                                 src="/images/img_hero_3.png"
                                 className="mx-auto mb-8 rounded-xl"
+                                alt="Hero"
                             />
-
                             <p className="text-center leading-8 text-gray-800">
+                                {" "}
                                 Pokjawas (Kelompok Kerja Pengawas) Madrasah/PAI
                                 merupakan wadah bagi pengawas untuk meningkatkan
                                 kompetensi dan kinerja melalui supervisi
@@ -342,8 +214,8 @@ export default function Profil() {
                                 pendampingan kepala madrasah dalam pengelolaan
                                 sekolah.
                             </p>
-
-                            <p className="text-center leading-8 text-gray-800 mt-6">
+                            <p className="text-center leading-8 mt-2 text-gray-800">
+                                {" "}
                                 Melalui peran tersebut, Pokjawas berkontribusi
                                 dalam menjamin mutu pendidikan, mendorong
                                 inovasi pembelajaran, serta memastikan penerapan
@@ -364,7 +236,7 @@ export default function Profil() {
 
                     <div className="max-w-7xl mx-auto px-6 relative z-10">
                         {/* Title Center */}
-                        <div className="text-center mb-16 relative inline-block w-full reveal">
+                        <div className="text-center mb-16 relative inline-block w-full">
                             <h2 className="text-4xl font-bold text-gray-800 relative inline-block">
                                 Visi & Misi
                                 <span className="absolute -left-10 top-0 w-6 h-6 border-l-4 border-t-4 border-green-800"></span>
@@ -376,7 +248,6 @@ export default function Profil() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                             {/* LEFT SIDE */}
                             <div>
-                                {/* TEXT ATAS VISI */}
                                 <h3 className="text-4xl font-bold text-gray-800 leading-snug mb-6 reveal reveal-left">
                                     KELOMPOK KERJA <br />
                                     PENGAWAS (POKJAWAS)
@@ -388,7 +259,6 @@ export default function Profil() {
 
                                 {/* CARD VISI */}
                                 <div className="relative bg-white rounded-3xl shadow-md px-8 py-10 mt-40 reveal reveal-left">
-                                    {/* Label */}
                                     <div className="absolute -top-5 left-1 bg-green-800 text-white px-10 py-2 rounded-xl font-semibold">
                                         Visi
                                     </div>
@@ -398,7 +268,6 @@ export default function Profil() {
                                         religius dan bermartabat.
                                     </p>
 
-                                    {/* AKSEN MIRING (BIAR SAMA KAYAK MISI) */}
                                     <div className="absolute bottom-0 right-0 w-full h-7 bg-green-800 clip-visi"></div>
                                 </div>
                             </div>
@@ -436,10 +305,10 @@ export default function Profil() {
                     </div>
                 </section>
 
-                {/* STRUKTUR */}
+                {/* --- STRUKTUR ORGANISASI VISUAL --- */}
                 <section className="pb-20 mt-14">
-                    <div className="max-w-5xl mx-auto px-6 reveal">
-                        <div className="text-center mb-10 ">
+                    <div className="max-w-6xl mx-auto px-6 reveal">
+                        <div className="text-center mb-14">
                             <h2 className="text-4xl font-bold text-gray-800 relative inline-block">
                                 Struktur Organisasi
                                 <span className="absolute -left-10 top-0 w-6 h-6 border-l-4 border-t-4 border-green-800"></span>
@@ -447,101 +316,362 @@ export default function Profil() {
                             </h2>
                         </div>
 
-                        {/* TABLE */}
-                        <div className="border border-green-800 rounded-2xl overflow-hidden mb-6">
-                            {/* Ketua */}
-                            <div className="grid grid-cols-3 border-b border-green-800">
-                                <div className="p-4 font-semibold text-green-800 border-r border-green-800">
-                                    Ketua
-                                </div>
-                                <div className="col-span-2 p-4 text-green-800">
-                                    H. Suherman, S.Ag. MM
-                                </div>
+                        <div className="flex flex-col items-center mb-12">
+                            <MemberCard
+                                name="H. Suherman, S.Ag. MM"
+                                title="Ketua"
+                                isCore={true}
+                                imageUrl="images/member_pict_dummy.png"
+                            />
+
+                            <div className="w-0.5 h-8 bg-green-800 my-1"></div>
+                            <div className="w-[60%] h-px bg-green-800"></div>
+                            <div className="flex justify-between w-[62%] mb-4">
+                                <div className="w-0.5 h-4 bg-green-800 mx-auto"></div>
+                                <div className="w-0.5 h-4 bg-green-800 mx-auto"></div>
+                                <div className="w-0.5 h-4 bg-green-800 mx-auto"></div>
                             </div>
 
-                            {/* Wakil */}
-                            <div className="grid grid-cols-3 border-b border-green-800">
-                                <div className="p-4 font-semibold text-green-800 border-r border-green-800">
-                                    Wakil Ketua
-                                </div>
-                                <div className="col-span-2 p-4 text-green-800">
-                                    1. H. Mulyadi, S.Ag. M.Pd <br />
-                                    2. H. Syarani, S.Ag. MM <br />
-                                    3. H. Sholeh, M.Pd
-                                </div>
+                            <div className="flex justify-center gap-6 md:gap-12 w-full max-w-3xl">
+                                <MemberCard
+                                    name="H. Mulyadi, S.Ag. M.Pd"
+                                    title="Wakil Ketua I"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
+                                <MemberCard
+                                    name="H. Syarani, S.Ag. MM"
+                                    title="Wakil Ketua II"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
+                                <MemberCard
+                                    name="H. Sholeh, M.Pd"
+                                    title="Wakil Ketua III"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
                             </div>
 
-                            {/* Sekretaris */}
-                            <div className="grid grid-cols-3 border-b border-green-800">
-                                <div className="p-4 font-semibold text-green-800 border-r border-green-800">
-                                    Sekretaris
-                                </div>
-                                <div className="col-span-2 p-4 text-green-800">
-                                    1. H. Sukirno Akmadroji, M.Pd <br />
-                                    2. H. Budiman
-                                </div>
+                            <div className="w-0.5 h-8 bg-green-800 my-2"></div>
+                            <div className="w-[80%] h-px bg-green-800"></div>
+                            <div className="flex justify-between w-[81%] mb-4">
+                                <div className="w-0.5 h-4 bg-green-800"></div>
+                                <div className="w-0.5 h-4 bg-green-800"></div>
+                                <div className="w-0.5 h-4 bg-green-800"></div>
+                                <div className="w-0.5 h-4 bg-green-800"></div>
                             </div>
 
-                            {/* Bendahara */}
-                            <div className="grid grid-cols-3">
-                                <div className="p-4 font-semibold text-green-800 border-r border-green-800">
-                                    Bendahara
-                                </div>
-                                <div className="col-span-2 p-4 text-green-800">
-                                    1. Burdahnudin, M.Pd <br />
-                                    2. Asto, ST
-                                </div>
+                            <div className="flex justify-center gap-4 md:gap-8 w-full max-w-4xl">
+                                <MemberCard
+                                    name="H. Sukirno Akmadroji, M.Pd"
+                                    title="Sekretaris I"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
+                                <MemberCard
+                                    name="H. Budiman"
+                                    title="Sekretaris II"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
+                                <MemberCard
+                                    name="Burdahnudin, M.Pd"
+                                    title="Bendahara I"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
+                                <MemberCard
+                                    name="Asto, ST"
+                                    title="Bendahara II"
+                                    isCore={true}
+                                    imageUrl="images/member_pict_dummy.png"
+                                />
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            {dropdownData.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="border border-green-800 rounded-xl overflow-hidden"
+                        <div className="space-y-6 max-w-4xl mx-auto">
+                            {/* KORD. BID. TK/RA, SD/MI */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() => toggleSection("tk_ra_sd_mi")}
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
                                 >
-                                    {/* BUTTON */}
-                                    <button
-                                        onClick={() => toggle(item.id)}
-                                        className="w-full flex justify-between items-center bg-green-800 text-white px-4 py-3 font-semibold"
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. BID. TK / RA, SD / MI
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.tk_ra_sd_mi ? "rotate-180" : ""}`}
                                     >
-                                        {item.title}
-
-                                        {/* ICON */}
-                                        <span
-                                            className={`transition-transform duration-300 ${
-                                                open === item.id
-                                                    ? "rotate-45 scale-110"
-                                                    : ""
-                                            }`}
-                                        >
-                                            +
-                                        </span>
-                                    </button>
-
-                                    {/* CONTENT */}
-                                    <div
-                                        className={`overflow-hidden transition-[max-height] duration-700 ease-in-out will-change-[max-height] ${
-                                            open === item.id
-                                                ? "max-h-[1000px]"
-                                                : "max-h-0"
-                                        }`}
-                                    >
-                                        <div className="p-4 bg-white text-green-800 space-y-1">
-                                            {item.content.map((c, i) => (
-                                                <div key={i}>
-                                                    {i + 1}. {c}
-                                                </div>
-                                            ))}
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.tk_ra_sd_mi ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-wrap justify-center gap-8">
+                                            <MemberCard
+                                                name="Drs Zaenas Solihin"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="Yahya, S.Pd.I"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="H. Misbakhul Munir, M.Pd"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* KORD. BID. SMP/MTs */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() => toggleSection("smp_mts")}
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
+                                >
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. BID. SMP / MTs
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.smp_mts ? "rotate-180" : ""}`}
+                                    >
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.smp_mts ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-wrap justify-center gap-8">
+                                            <MemberCard
+                                                name="Sarun, S.Ag, MM"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="Dr. Wuliyono, M.Si"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="Dr. Isep Rusmawan, MM"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* KORD. BID. SMA, SMK/MA, MAK */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() =>
+                                        toggleSection("sma_smk_ma_mak")
+                                    }
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
+                                >
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. BID. SMA, SMK/MA, MAK
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.sma_smk_ma_mak ? "rotate-180" : ""}`}
+                                    >
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.sma_smk_ma_mak ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-wrap justify-center gap-8">
+                                            <MemberCard
+                                                name="Drs. H. Martono"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="H. Jaenudin, S.Pd, MM"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                            <MemberCard
+                                                name="H. Didin Hadiat, M.Pd"
+                                                imageUrl="images/member_pict_dummy.png"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* KORD. PENINGKATAN KOMPETENSI */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() => toggleSection("kompetensi")}
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
+                                >
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. PENINGKATAN KOMPETENSI
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.kompetensi ? "rotate-180" : ""}`}
+                                    >
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.kompetensi ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-col items-center gap-6">
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="Dr. H. Yaya Suhaya, S.Ag. M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Drs. Yuhadi, M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="H. Subandi, M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="H. Taufik Rahman, MA."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Idris, S.Ag. M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* KORD. PROG. LAPORAN & EVALUASI */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() =>
+                                        toggleSection("laporan_evaluasi")
+                                    }
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
+                                >
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. PROG. LAPORAN & EVALUASI
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.laporan_evaluasi ? "rotate-180" : ""}`}
+                                    >
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.laporan_evaluasi ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-col items-center gap-6">
+                                            {/* Baris Atas (3 Orang) */}
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="Dr. H. Yaya Suhaya, S.Ag. M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Drs. Yuhadi, M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="H. Subandi, M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                            {/* Baris Bawah (2 Orang) */}
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="H. Taufik Rahman, MA."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Idris, S.Ag. M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* KORD. BID. KESEJAHTERAAN SOSIAL & HUBUNGAN MASYARAKAT */}
+                            <div className="border border-green-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button
+                                    onClick={() =>
+                                        toggleSection("kesejahteraan_sosial")
+                                    }
+                                    className="w-full bg-green-800 hover:bg-green-900 text-white font-bold py-3 text-sm flex justify-between px-4 items-center relative z-10"
+                                >
+                                    <span className="flex-1 text-center pl-4">
+                                        KORD. BID. KESEJAHTERAAN SOSIAL &
+                                        HUBUNGAN MASYARAKAT
+                                    </span>
+                                    <span
+                                        className={`transition-transform duration-300 ${openSections.kesejahteraan_sosial ? "rotate-180" : ""}`}
+                                    >
+                                        ▼
+                                    </span>
+                                </button>
+                                <div
+                                    className={`grid transition-all duration-300 ease-in-out ${openSections.kesejahteraan_sosial ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                                >
+                                    <div className="overflow-hidden bg-gray-50">
+                                        <div className="p-6 flex flex-col items-center gap-6">
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="Muhammad Nurdin, S.Ag. M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="H. Dayat Dania, S.Pd.I. MA."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Atmadi, S.Pd.I. M.Si."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="Inzal Zulkarnaen, S.Pd. MM."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Vienta Heryani, M.Pd."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                            <div className="flex flex-wrap justify-center gap-8 w-full">
+                                                <MemberCard
+                                                    name="H. Abduh Basyith, S.Pd.I"
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                                <MemberCard
+                                                    name="Drs. Moh Fajeri, M.Si."
+                                                    imageUrl="images/member_pict_dummy.png"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Footer */}
+                {/* --- FOOTER --- */}
                 <section className="relative pt-40 pb-20 flex justify-center mt-32 mb-10">
                     {/* Gradient background */}
                     <div
@@ -570,13 +700,13 @@ export default function Profil() {
                                 </p>
 
                                 {/* Form Email */}
-                                <div class="border border-gray-300 rounded-lg p-1 flex items-center gap-2 max-w-xs">
+                                <div className="border border-gray-300 rounded-lg p-1 flex items-center gap-2 max-w-xs">
                                     <input
                                         type="email"
                                         placeholder="Masukkan Email"
-                                        class="flex-1 px-3 py-2 text-sm outline-none focus:outline-none focus:ring-0 border-none"
+                                        className="flex-1 px-3 py-2 text-sm outline-none focus:outline-none focus:ring-0 border-none"
                                     />
-                                    <button class="bg-green-800 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700">
+                                    <button className="bg-green-800 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700">
                                         Enter
                                     </button>
                                 </div>
@@ -661,7 +791,6 @@ export default function Profil() {
                                                 Facebook
                                             </a>
                                         </li>
-                                        
                                     </ul>
                                 </div>
 
